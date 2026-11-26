@@ -224,6 +224,7 @@ Ohai.plugin(:Cloud) do
   def get_linode_values
     @cloud_attr_obj.add_ipv4_addr(linode["public_ip"], :public)
     @cloud_attr_obj.add_ipv4_addr(linode["private_ip"], :private)
+    @cloud_attr_obj.add_ipv6_addr(linode["public_ipv6"], :public)
     @cloud_attr_obj.public_hostname = linode["public_hostname"]
     @cloud_attr_obj.local_hostname = linode["local_hostname"]
     @cloud_attr_obj.provider = "linode"

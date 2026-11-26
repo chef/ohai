@@ -25,6 +25,8 @@ describe Ohai::System, "plugin linode" do
   before do
     # SMBIOS fields a test doesn't set read as absent, on every platform
     allow(plugin).to receive(:smbios_value).and_return(nil)
+    # the metadata service is unreachable unless a test says otherwise
+    allow(plugin).to receive(:can_socket_connect?).and_return(false)
     allow(plugin).to receive(:collect_os).and_return(:linux)
     allow(plugin).to receive(:file_exist?).with("/etc/apt/sources.list").and_return(false)
     plugin[:domain] = "nope.example.com"
@@ -160,5 +162,41 @@ describe Ohai::System, "plugin linode" do
     end
 
     it_behaves_like "linode"
+  end
+
+  describe "with the Linode system vendor and the metadata service" do
+    before do
+      allow(plugin).to receive(:smbios_value).with(:sys_vendor).and_return("Linode")
+      allow(plugin).to receive(:can_socket_connect?)
+        .with(Ohai::Mixin::LinodeMetadata::LINODE_METADATA_ADDR, 80)
+        .and_return(true)
+    end
+
+    it "stores the instance and network documents and prefers their addresses" do
+      allow(plugin).to receive(:fetch_metadata).and_return(
+        "instance" => { "id" => 1234, "label" => "web-1", "region" => "us-ord", "type" => "g6-standard-1" },
+        "network" => {
+          "ipv4" => { "public" => ["192.0.2.10/32"], "private" => ["192.168.128.5/17"], "shared" => [] },
+          "ipv6" => { "slaac" => "2001:db8:1::5/128", "link_local" => "fe80::1/128", "ranges" => [] },
+        }
+      )
+      plugin.run
+      expect(plugin[:linode][:instance][:label]).to eq("web-1")
+      expect(plugin[:linode][:public_ip]).to eq("192.0.2.10")
+      expect(plugin[:linode][:private_ip]).to eq("192.168.128.5")
+      expect(plugin[:linode][:public_ipv6]).to eq("2001:db8:1::5")
+    end
+
+    it "keeps the eth0 addresses when the metadata service returns nothing" do
+      allow(plugin).to receive(:fetch_metadata).and_return({})
+      plugin.run
+      expect(plugin[:linode][:public_ip]).to eq("1.2.3.4")
+    end
+
+    it "keeps the eth0 addresses when the metadata request fails" do
+      allow(plugin).to receive(:fetch_metadata).and_raise(RuntimeError, "unexpected")
+      plugin.run
+      expect(plugin[:linode][:public_ip]).to eq("1.2.3.4")
+    end
   end
 end

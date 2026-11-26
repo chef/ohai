@@ -88,8 +88,9 @@ describe Ohai::System, "Linux virtualization platform" do
   end
 
   describe "when we are checking for docker" do
-    it "sets docker host if docker binary exists" do
+    it "sets docker host if docker binary and the daemon socket exist" do
       allow(plugin).to receive(:which).with("docker").and_return(true)
+      allow(plugin).to receive(:file_exist?).with("/var/run/docker.sock").and_return(true)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("docker")
       expect(plugin[:virtualization][:role]).to eq("host")
@@ -107,9 +108,30 @@ describe Ohai::System, "Linux virtualization platform" do
     end
   end
 
+  describe "when only the docker CLI is installed" do
+    it "does not set docker host" do
+      allow(plugin).to receive(:which).with("docker").and_return(true)
+      allow(plugin).to receive(:file_exist?).with("/var/run/docker.sock").and_return(false)
+      allow(plugin).to receive(:file_exist?).with("/run/docker.sock").and_return(false)
+      allow(plugin).to receive(:dir_glob).with("/run/user/*/docker.sock").and_return([])
+      plugin.run
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
+    end
+
+    it "sets docker host when a rootless daemon socket exists" do
+      allow(plugin).to receive(:which).with("docker").and_return(true)
+      allow(plugin).to receive(:file_exist?).with("/var/run/docker.sock").and_return(false)
+      allow(plugin).to receive(:file_exist?).with("/run/docker.sock").and_return(false)
+      allow(plugin).to receive(:dir_glob).with("/run/user/*/docker.sock").and_return(["/run/user/1000/docker.sock"])
+      plugin.run
+      expect(plugin[:virtualization][:systems][:docker]).to eq("host")
+    end
+  end
+
   describe "when we are checking for openstack" do
-    it "sets openstack host if nova binary exists" do
-      allow(plugin).to receive(:nova_exists?).and_return("/usr/bin/nova")
+    it "sets openstack host if nova-compute exists" do
+      allow(plugin).to receive(:nova_exists?).and_call_original
+      allow(plugin).to receive(:which).with("nova-compute").and_return("/usr/bin/nova-compute")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("openstack")
       expect(plugin[:virtualization][:role]).to eq("host")

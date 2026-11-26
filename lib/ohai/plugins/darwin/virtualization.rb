@@ -39,8 +39,10 @@ Ohai.plugin(:Virtualization) do
     file_exist?("/Applications/VMware Fusion.app/")
   end
 
+  # Docker Desktop links /var/run/docker.sock to its daemon's socket; the
+  # docker CLI alone may only talk to a remote daemon
   def docker_exists?
-    which("docker")
+    which("docker") && file_exist?("/var/run/docker.sock")
   end
 
   def sysctl_exists?

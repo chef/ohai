@@ -175,7 +175,7 @@ describe Ohai::System, "Linux plugin platform" do
   end
 
   describe "#platform_family_from_platform" do
-    %w{oracle centos redhat scientific enterpriseenterprise xenserver cloudlinux ibm_powerkvm parallels nexus_centos clearos bigip}.each do |p|
+    %w{oracle centos redhat scientific enterpriseenterprise xenserver cloudlinux ibm_powerkvm parallels nexus_centos clearos bigip miraclelinux circle navylinux eurolinux}.each do |p|
       it "returns rhel for #{p} platform" do
         expect(plugin.platform_family_from_platform(p)).to eq("rhel")
       end

@@ -142,4 +142,25 @@ describe Ohai::System, "BSD virtualization plugin" do
       expect(plugin[:virtualization][:systems][:amazonec2]).to eq("guest")
     end
   end
+
+  context "when on OpenBSD, which creates /dev/vmm on every amd64 install" do
+    # https://github.com/openbsd/src/blob/master/etc/etc.amd64/MAKEDEV (vmm in "all")
+    before do
+      allow(plugin).to receive(:collect_os).and_return(:openbsd)
+      allow(File).to receive(:exist?).with("/dev/vmm").and_return true
+    end
+
+    it "does not report a bhyve host" do
+      plugin.run
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
+    end
+
+    it "does not run the FreeBSD-only probes" do
+      plugin.run
+      expect(plugin).not_to have_received(:shell_out).with("jls -nd")
+      expect(plugin).not_to have_received(:shell_out).with("sysctl -n security.jail.jailed")
+      expect(plugin).not_to have_received(:shell_out).with(Ohai.abs_path( "/sbin/kldstat" ).to_s)
+      expect(plugin).not_to have_received(:shell_out).with("sysctl -n kern.vm_guest")
+    end
+  end
 end

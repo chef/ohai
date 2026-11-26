@@ -39,6 +39,7 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(plugin).to receive(:file_exist?).with("/sys/devices/virtual/misc/kvm").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/dev/lxd/sock").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/var/lib/lxd/devlxd").and_return(false)
+    allow(plugin).to receive(:dir_glob).with("/sys/bus/vmbus/devices/*").and_return([])
     allow(plugin).to receive(:file_exist?).with("/var/snap/lxd/common/lxd/devlxd").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/proc/1/environ").and_return(false)
 
@@ -371,6 +372,16 @@ describe Ohai::System, "Linux virtualization platform" do
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("lxd")
       expect(plugin[:virtualization][:role]).to eq("host")
+    end
+  end
+
+  describe "when VMBus devices exist" do
+    it "sets hyperv guest without the KVP pool" do
+      allow(plugin).to receive(:dir_glob).with("/sys/bus/vmbus/devices/*").and_return(["/sys/bus/vmbus/devices/f8615163-df3e-46c5-913f-f2d2f965ed0e"])
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("hyperv")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:hyperv]).to eq("guest")
     end
   end
 

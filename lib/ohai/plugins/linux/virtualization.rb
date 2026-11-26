@@ -162,6 +162,16 @@ Ohai.plugin(:Virtualization) do
       virtualization[:systems][:openvz] = "guest"
     end
 
+    # Hyper-V guests have VMBus devices, on x86 and arm64 and readable without
+    # root (Documentation/ABI/stable/sysfs-bus-vmbus). The KVP pool below
+    # exists only while the Hyper-V KVP daemon runs.
+    unless dir_glob("/sys/bus/vmbus/devices/*").empty?
+      logger.trace("Plugin Virtualization: /sys/bus/vmbus/devices lists VMBus devices. Detecting as hyperv guest")
+      virtualization[:system] = "hyperv"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:hyperv] = "guest"
+    end
+
     # Detect Hyper-V guest and the hostname of the host
     if file_exist?("/var/lib/hyperv/.kvp_pool_3")
       logger.trace("Plugin Virtualization: /var/lib/hyperv/.kvp_pool_3 contains string indicating Hyper-V guest")

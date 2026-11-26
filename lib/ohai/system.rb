@@ -32,7 +32,7 @@ require_relative "hints"
 require_relative "config"
 require_relative "train_transport"
 require "ffi_yajl" unless defined?(FFI_Yajl)
-require "cgi" unless defined?(CGI)
+require "uri" unless defined?(URI)
 
 module Ohai
   # The class used by Ohai::Application and Chef to actually collect data
@@ -298,7 +298,12 @@ module Ohai
       uri = URI.parse(config[:target])
       return {} unless uri.query
 
-      CGI.parse(uri.query).map { |k, v| [k.to_sym, v.first] }.to_h
+      # URI.decode_www_form instead of CGI.parse: since Ruby 4.0 "cgi" only
+      # provides the escaping methods unless the cgi gem is installed. Keep
+      # the first value of a repeated key, as CGI.parse(...).first did.
+      URI.decode_www_form(uri.query).each_with_object({}) do |(key, value), params|
+        params[key.to_sym] = value unless params.key?(key.to_sym)
+      end
     end
 
     def platform_value(platform, attribute)

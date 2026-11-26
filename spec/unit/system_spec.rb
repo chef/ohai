@@ -196,6 +196,28 @@ describe "Ohai::System" do
 
   end
 
+  describe "#backend_parameters" do
+    def params_for(target)
+      Ohai::System.new(target: target).send(:backend_parameters)
+    end
+
+    it "returns the target URL's query parameters as symbols" do
+      expect(params_for("ssh://user@host?key_files=/tmp/key&port=2222")).to eq(key_files: "/tmp/key", port: "2222")
+    end
+
+    it "keeps the first value of a repeated parameter" do
+      expect(params_for("ssh://user@host?port=2222&port=22")).to eq(port: "2222")
+    end
+
+    it "decodes encoded values" do
+      expect(params_for("ssh://user@host?password=a%26b%3Dc")).to eq(password: "a&b=c")
+    end
+
+    it "returns an empty hash without a query" do
+      expect(params_for("ssh://user@host")).to eq({})
+    end
+  end
+
   describe "when running plugins" do
     when_plugins_directory "contains a v7 plugins with :default and platform specific blocks" do
       with_plugin("message.rb", <<~EOF)

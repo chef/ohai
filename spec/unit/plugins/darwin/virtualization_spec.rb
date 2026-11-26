@@ -144,7 +144,7 @@ describe Ohai::System, "Darwin virtualization platform" do
       allow(plugin).to receive(:ioreg_exists?).and_return(true)
       shellout = double("shellout")
       allow(shellout).to receive(:stdout).and_return(ioreg_vm)
-      allow(plugin).to receive(:shell_out).with("ioreg -l").and_return(shellout)
+      allow(plugin).to receive(:shell_out).with("ioreg -l -r -c IOPCIDevice -d 1").and_return(shellout)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("parallels")
       expect(plugin[:virtualization][:role]).to eq("guest")
@@ -155,7 +155,7 @@ describe Ohai::System, "Darwin virtualization platform" do
       allow(plugin).to receive(:ioreg_exists?).and_return(true)
       shellout = double("shellout")
       allow(shellout).to receive(:stdout).and_return(ioreg_vm)
-      allow(plugin).to receive(:shell_out).with("ioreg -l").and_return(shellout)
+      allow(plugin).to receive(:shell_out).with("ioreg -l -r -c IOPCIDevice -d 1").and_return(shellout)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("parallels")
       expect(plugin[:virtualization][:role]).to eq("guest")
@@ -167,7 +167,7 @@ describe Ohai::System, "Darwin virtualization platform" do
       allow(plugin).to receive(:ioreg_exists?).and_return(true)
       shellout = double("shellout")
       allow(shellout).to receive(:stdout).and_return(ioreg_not_vm)
-      allow(plugin).to receive(:shell_out).with("ioreg -l").and_return(shellout)
+      allow(plugin).to receive(:shell_out).with("ioreg -l -r -c IOPCIDevice -d 1").and_return(shellout)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("parallels")
       expect(plugin[:virtualization][:role]).to eq("host")
@@ -178,7 +178,7 @@ describe Ohai::System, "Darwin virtualization platform" do
       allow(plugin).to receive(:ioreg_exists?).and_return(true)
       shellout = double("shellout")
       allow(shellout).to receive(:stdout).and_return(ioreg_not_vm)
-      allow(plugin).to receive(:shell_out).with("ioreg -l").and_return(shellout)
+      allow(plugin).to receive(:shell_out).with("ioreg -l -r -c IOPCIDevice -d 1").and_return(shellout)
       plugin.run
       expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end

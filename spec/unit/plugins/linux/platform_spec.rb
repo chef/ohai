@@ -127,6 +127,11 @@ describe Ohai::System, "Linux plugin platform" do
       expect(plugin.platform_id_remap("cumulus-linux")).to eq("cumulus")
     end
 
+    # https://github.com/chef/os_release/blob/main/clearlinux_1
+    it "returns clearlinux for clear-linux-os os-release id" do
+      expect(plugin.platform_id_remap("clear-linux-os")).to eq("clearlinux")
+    end
+
     # See https://github.com/chef/os_release/blob/main/xcp-ng_7_4#L3 for an example of why we do this
     it "returns a downcased ID value" do
       expect(plugin.platform_id_remap("XCP-ng")).to eq("xcp-ng")
@@ -315,6 +320,37 @@ describe Ohai::System, "Linux plugin platform" do
         expect(plugin[:platform]).to eq("centos")
         expect(plugin[:platform_family]).to eq("rhel")
         expect(plugin[:platform_version]).to eq("7.5.1804")
+      end
+    end
+
+    # https://github.com/chef/os_release/blob/main/clearlinux_1
+    context "when on clear linux with /etc/os-release" do
+      let(:os_data) do
+        <<~OS_DATA
+          NAME="Clear Linux OS"
+          VERSION=1
+          ID=clear-linux-os
+          ID_LIKE=clear-linux-os
+          VERSION_ID=38250
+          PRETTY_NAME="Clear Linux OS"
+          ANSI_COLOR="1;35"
+          HOME_URL="https://clearlinux.org"
+          SUPPORT_URL="https://clearlinux.org"
+          BUG_REPORT_URL="mailto:dev@lists.clearlinux.org"
+          PRIVACY_POLICY_URL="http://www.intel.com/privacy"
+          BUILD_ID=38250
+        OS_DATA
+      end
+
+      before do
+        expect(plugin).to receive(:file_read).with("/etc/os-release").and_return(os_data)
+      end
+
+      it "sets platform and platform_family to clearlinux" do
+        plugin.run
+        expect(plugin[:platform]).to eq("clearlinux")
+        expect(plugin[:platform_family]).to eq("clearlinux")
+        expect(plugin[:platform_version]).to eq("38250")
       end
     end
 

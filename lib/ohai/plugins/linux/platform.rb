@@ -46,10 +46,9 @@ Ohai.plugin(:Platform) do
   def read_os_release_info(file)
     return nil unless file_exist?(file)
 
-    file_read(file).split.inject({}) do |map, line|
-      key, value = line.split("=")
+    file_read(file).each_line.with_object({}) do |line, map|
+      key, value = line.strip.split("=", 2)
       map[key] = value.gsub(/\A"|"\Z/, "") if value
-      map
     end
   end
 
@@ -134,8 +133,9 @@ Ohai.plugin(:Platform) do
   #
   def platform_family_from_platform(plat)
     case plat
-    when /ubuntu/, /debian/, /linuxmint/, /raspbian/, /cumulus/, /kali/, /pop/
-      # apt-get+dpkg almost certainly goes here
+    when /ubuntu/, /debian/, /linuxmint/, /raspbian/, /cumulus/, /kali/, /pop/, /vyos/
+      # apt-get+dpkg almost certainly goes here. VyOS is built on Debian but its
+      # /etc/os-release sets no ID_LIKE and it ships no /etc/debian_version.
       "debian"
     when /centos/, /redhat/, /oracle/, /almalinux/, /rocky/, /scientific/, /enterpriseenterprise/, /xenserver/, /xcp-ng/, /cloudlinux/, /alibabalinux/, /sangoma/, /clearos/, /parallels/, /ibm_powerkvm/, /nexus_centos/, /bigip/, /virtuozzo/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
       # NOTE: "rhel" should be reserved exclusively for recompiled rhel versions that are nearly perfectly compatible down to the platform_version.

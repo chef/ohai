@@ -1,0 +1,12 @@
+PRETTY_NAME="VyOS 2026.11.25-0017-rolling (rolling)"
+NAME="VyOS"
+VERSION_ID="2026.11.25-0017-rolling"
+VERSION="2026.11.25-0017-rolling (rolling)"
+VERSION_CODENAME=rolling
+ID=vyos
+BUILD_ID=""
+HOME_URL="https://vyos.io"
+SUPPORT_URL="https://support.vyos.io"
+BUG_REPORT_URL="https://vyos.dev"
+DOCUMENTATION_URL="https://docs.vyos.io/en/latest"
+

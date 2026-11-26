@@ -442,6 +442,17 @@ describe Ohai::System, "Darwin Network Plugin" do
       expect(@plugin["network"]).not_to be_nil
     end
 
+    it "detects the status of the interfaces" do
+      expect(@plugin["network"]["interfaces"]["en1"]["status"]).to eq("active")
+      expect(@plugin["network"]["interfaces"]["en0"]["status"]).to eq("inactive")
+      expect(@plugin["network"]["interfaces"]["p2p0"]["status"]).to eq("inactive")
+    end
+
+    it "detects the selected media of the interfaces" do
+      expect(@plugin["network"]["interfaces"]["en1"]["media"]["selected"]).to eq("autoselect" => { "options" => [] })
+      expect(@plugin["network"]["interfaces"]["fw0"]["media"]["selected"]).to eq("autoselect" => { "options" => ["full-duplex"] })
+    end
+
     it "detects the interfaces" do
       expect(@plugin["network"]["interfaces"].keys.sort).to eq(%w{en0 en1 fw0 gif0 lo0 p2p0 stf0 utun0})
     end

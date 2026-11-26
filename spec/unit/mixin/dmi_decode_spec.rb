@@ -31,6 +31,7 @@ describe Ohai::Mixin::DmiDecode, "guest_from_dmi_data" do
     amazonec2: ["Amazon EC2", "c5n.large", "Not Specified"],
     veertu: ["Veertu", "Veertu", "Not Specified"],
     parallels: ["Parallels Software International Inc.", "Parallels Virtual Platform", "None"],
+    apple: ["Apple Inc.", "Apple Virtualization Generic Platform", "1"],
     vbox: ["Oracle Corporation", "VirtualBox", "1.2"],
     openstack: ["OpenStack Foundation", "", "15.1.5"],
     kvm: ["Red Hat", "KVM", "RHEL 7.0.0 PC (i440FX + PIIX, 1996"],
@@ -40,6 +41,18 @@ describe Ohai::Mixin::DmiDecode, "guest_from_dmi_data" do
       it "returns '#{hypervisor}'" do
         expect(mixin.guest_from_dmi_data(values[0], values[1], values[2])).to eq(hypervisor.to_s)
       end
+    end
+  end
+
+  describe "when passed Apple hardware dmi data" do
+    it "returns nil for a Mac running Linux directly" do
+      expect(mixin.guest_from_dmi_data("Apple Inc.", "MacBookPro18,3", "1.0")).to be_nil
+    end
+  end
+
+  describe "when passed Microsoft dmi data without a product name" do
+    it "returns nil instead of raising" do
+      expect(mixin.guest_from_dmi_data("Microsoft Corporation", nil, nil)).to be_nil
     end
   end
 

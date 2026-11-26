@@ -41,6 +41,9 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(plugin).to receive(:file_exist?).with("/var/lib/lxd/devlxd").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/var/snap/lxd/common/lxd/devlxd").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/proc/1/environ").and_return(false)
+    %w{sys_vendor product_name product_version board_vendor board_name chassis_vendor}.each do |name|
+      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/#{name}").and_return(false)
+    end
 
     # default the which wrappers to nil
     allow(plugin).to receive(:which).with("lxc-version").and_return(nil)
@@ -84,6 +87,45 @@ describe Ohai::System, "Linux virtualization platform" do
       expect(plugin).to receive(:file_exist?).at_least(:once).and_return(false)
       plugin.run
       expect(plugin[:virtualization]).to eq({ "systems" => {} })
+    end
+
+    it "sets empty virtualization attributes for a physical base board and chassis" do
+      plugin[:dmi] = { system: { manufacturer: "Supermicro", product_name: "Super Server", version: "0123456789" },
+                       base_board: { manufacturer: "Supermicro", product_name: "X12STH-SYS" },
+                       chassis: { manufacturer: "Supermicro" } }
+      plugin.run
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
+    end
+  end
+
+  # values from a Hetzner Cloud CAX11 (arm64) server running Debian 13,
+  # which has no hypervisor CPU flag and branded system strings
+  describe "when the system strings are branded and QEMU's are on the base board" do
+    it "sets kvm guest from dmidecode data" do
+      plugin[:dmi] = { system: { manufacturer: "Hetzner", product_name: "vServer", version: "20171111" },
+                       base_board: { manufacturer: "KVM", product_name: "KVM Virtual Machine", version: "virt-8.2" },
+                       chassis: { manufacturer: "QEMU" } }
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("kvm")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
+    end
+
+    it "sets kvm guest from sysfs when dmidecode data is missing" do
+      plugin[:dmi] = {}
+      { "sys_vendor" => "Hetzner\n", "product_name" => "vServer\n", "product_version" => "20171111\n",
+        "board_vendor" => "KVM\n", "board_name" => "KVM Virtual Machine\n", "chassis_vendor" => "QEMU\n" }.each do |name, value|
+          allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/#{name}").and_return(true)
+          allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/#{name}").and_return(value)
+        end
+      plugin.run
+      expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
+    end
+
+    it "sets kvm guest from a QEMU chassis alone" do
+      plugin[:dmi] = { system: { manufacturer: "Hetzner", product_name: "vServer" }, chassis: { manufacturer: "QEMU" } }
+      plugin.run
+      expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
     end
   end
 
@@ -730,5 +772,39 @@ describe Ohai::System, "Linux virtualization platform" do
   it "does not set virtualization if no tests match" do
     plugin.run
     expect(plugin[:virtualization]).to eq({ "systems" => {} })
+  end
+
+  describe "when on Apple's Virtualization.framework" do
+    # values from an Apple Virtualization guest (Lima vz) running Debian 12
+    it "sets apple guest from dmidecode data" do
+      plugin[:dmi] = { system: { manufacturer: "Apple Inc.", product_name: "Apple Virtualization Generic Platform", version: "1" } }
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("apple")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:apple]).to eq("guest")
+    end
+
+    it "sets apple guest from sysfs when dmidecode data is missing" do
+      plugin[:dmi] = {}
+      { "sys_vendor" => "Apple Inc.\n", "product_name" => "Apple Virtualization Generic Platform\n", "product_version" => "1\n" }.each do |name, value|
+        allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/#{name}").and_return(true)
+        allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/#{name}").and_return(value)
+      end
+      plugin.run
+      expect(plugin[:virtualization][:systems][:apple]).to eq("guest")
+    end
+  end
+
+  describe "with DMI data only in sysfs" do
+    # dmidecode needs root and is missing from many minimal images
+    it "detects a VMware guest" do
+      plugin[:dmi] = {}
+      { "sys_vendor" => "VMware, Inc.\n", "product_name" => "VMware Virtual Platform\n", "product_version" => "None\n" }.each do |name, value|
+        allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/#{name}").and_return(true)
+        allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/#{name}").and_return(value)
+      end
+      plugin.run
+      expect(plugin[:virtualization][:systems][:vmware]).to eq("guest")
+    end
   end
 end

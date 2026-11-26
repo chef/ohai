@@ -107,7 +107,6 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:alibaba] = nil
       @plugin[:ec2] = nil
       @plugin[:rackspace] = nil
-      @plugin[:eucalyptus] = nil
       @plugin[:linode] = nil
       @plugin[:azure] = nil
       @plugin[:gce] = nil
@@ -403,29 +402,6 @@ describe Ohai::System, "plugin cloud" do
     it "populates cloud provider" do
       @plugin.run
       expect(@plugin[:cloud][:provider]).to eq("linode")
-    end
-  end
-
-  describe "with eucalyptus mash" do
-    before do
-      @plugin[:eucalyptus] = Mash.new
-    end
-
-    it "populates cloud public ip" do
-      @plugin[:eucalyptus]["public_ipv4"] = "174.129.150.8"
-      @plugin.run
-      expect(@plugin[:cloud][:public_ipv4_addrs][0]).to eq(@plugin[:eucalyptus]["public_ipv4"])
-    end
-
-    it "populates cloud private ip" do
-      @plugin[:eucalyptus]["local_ipv4"] = "10.252.42.149"
-      @plugin.run
-      expect(@plugin[:cloud][:local_ipv4_addrs][0]).to eq(@plugin[:eucalyptus]["local_ipv4"])
-    end
-
-    it "populates cloud provider" do
-      @plugin.run
-      expect(@plugin[:cloud][:provider]).to eq("eucalyptus")
     end
   end
 

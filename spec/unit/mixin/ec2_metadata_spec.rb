@@ -65,7 +65,7 @@ describe Ohai::Mixin::Ec2Metadata do
       end
     end
 
-    # Presume 'latest' when we get a 404 for Eucalyptus back-compat
+    # Presume 'latest' when the metadata server returns 404 for the version list
     context "when the response code is 404" do
       let(:response) { double("Net::HTTP Response", code: "404") }
 

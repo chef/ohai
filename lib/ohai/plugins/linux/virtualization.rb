@@ -191,6 +191,36 @@ Ohai.plugin(:Virtualization) do
       end
     end
 
+    # Detect the Windows Subsystem for Linux from the kernel release, as
+    # Microsoft documents: https://github.com/microsoft/WSL/issues/423#issuecomment-221627364
+    # WSL 1 reports "Microsoft" (4.4.0-19041-Microsoft). WSL 2 runs
+    # Microsoft's kernel in a Hyper-V utility VM, which reports "microsoft"
+    # (4.19.104-microsoft-standard, 6.6.87.2-microsoft-standard-WSL2).
+    # WSL also registers the WSLInterop binfmt handler, which still
+    # identifies WSL 2 when it boots a custom kernel. This runs after the
+    # VM checks, so WSL wins over the Hyper-V and KVM guest those see, and
+    # before the container checks, so a container on WSL is still reported.
+    if file_exist?("/proc/sys/kernel/osrelease")
+      osrelease = file_read("/proc/sys/kernel/osrelease")
+      wsl_version = if osrelease.include?("Microsoft")
+                      1
+                    elsif /microsoft|WSL/.match?(osrelease)
+                      2
+                    end
+    end
+    if wsl_version.nil? && file_exist?("/proc/sys/fs/binfmt_misc/WSLInterop")
+      wsl_version = 2 # WSL 1 always reports its "Microsoft" kernel release
+    end
+    if wsl_version
+      logger.trace("Plugin Virtualization: kernel release or WSLInterop indicates WSL #{wsl_version}. Detecting as wsl guest")
+      virtualization[:system] = "wsl"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:wsl] = "guest"
+      # WSL 2 distributions run inside a Hyper-V utility VM. This matches
+      # systemd-detect-virt, which reports "wsl" and, with --vm, "microsoft".
+      virtualization[:systems][:hyperv] = "guest" if wsl_version == 2
+    end
+
     # Detect LXC/Docker/Nspawn
     #
     # /proc/self/cgroup will look like this inside a docker container:

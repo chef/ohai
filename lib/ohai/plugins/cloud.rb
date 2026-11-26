@@ -30,6 +30,7 @@ Ohai.plugin(:Cloud) do
   depends "softlayer"
   depends "oci"
   depends "scaleway"
+  depends "hetzner"
 
   # Class to help enforce the interface exposed to node[:cloud] (OHAI-542)
   #
@@ -384,6 +385,42 @@ Ohai.plugin(:Cloud) do
     @cloud_attr_obj.provider = "scaleway"
   end
 
+  # ----------------------------------------
+  # hetzner
+  # ----------------------------------------
+
+  # Is current cloud hetzner?
+  #
+  # === Return
+  # true:: If hetzner Hash is defined
+  # false:: Otherwise
+  def on_hetzner?
+    hetzner != nil
+  end
+
+  # Fill cloud hash with hetzner values
+  def get_hetzner_values
+    @cloud_attr_obj.add_ipv4_addr(hetzner["public_ipv4"], :public)
+
+    # the public IPv6 address is only in the network config, as a static
+    # subnet "2001:db8::1/64"
+    Array(hetzner.dig("network_config", "config")).each do |interface|
+      Array(interface["subnets"]).each do |subnet|
+        next unless subnet["ipv6"] && subnet["address"]
+
+        @cloud_attr_obj.add_ipv6_addr(subnet["address"].to_s.split("/").first, :public)
+      end
+    end
+
+    Array(hetzner["private_networks"]).each do |network|
+      @cloud_attr_obj.add_ipv4_addr(network["ip"], :private)
+      Array(network["alias_ips"]).each { |ip| @cloud_attr_obj.add_ipv4_addr(ip, :private) }
+    end
+
+    @cloud_attr_obj.local_hostname = hetzner["hostname"]
+    @cloud_attr_obj.provider = "hetzner"
+  end
+
   # Runs one provider's getter. Provider data comes from metadata services
   # that can return partial or unexpected data, and an exception here would
   # otherwise drop the whole cloud attribute, including other providers' data.
@@ -410,6 +447,7 @@ Ohai.plugin(:Cloud) do
     collect_provider_values("alibaba") { get_alibaba_values } if on_alibaba?
     collect_provider_values("oci") { oci_values } if on_oci?
     collect_provider_values("scaleway") { get_scaleway_values } if on_scaleway?
+    collect_provider_values("hetzner") { get_hetzner_values } if on_hetzner?
 
     cloud @cloud_attr_obj.cloud_mash
   end

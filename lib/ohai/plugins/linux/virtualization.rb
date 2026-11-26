@@ -115,15 +115,18 @@ Ohai.plugin(:Virtualization) do
     end
 
     # Detect KVM systems via /sys
-    # guests will have the hypervisor cpu feature that hosts don't have
+    # guests will have the hypervisor cpu feature that hosts don't have. The
+    # kvm module also loads in a guest of another hypervisor that exposes
+    # nested virtualization; that guest is a KVM host.
     if file_exist?("/sys/devices/virtual/misc/kvm")
       virtualization[:system] = "kvm"
-      if file_read("/proc/cpuinfo").include?("hypervisor")
+      hypervisor_vendor = get_attribute(:cpu, :hypervisor_vendor)
+      if file_read("/proc/cpuinfo").include?("hypervisor") && (hypervisor_vendor.nil? || hypervisor_vendor == "KVM")
         logger.trace("Plugin Virtualization: /sys/devices/virtual/misc/kvm present and /proc/cpuinfo lists the hypervisor feature. Detecting as kvm guest")
         virtualization[:role] = "guest"
         virtualization[:systems][:kvm] = "guest"
       else
-        logger.trace("Plugin Virtualization: /sys/devices/virtual/misc/kvm present and /proc/cpuinfo does not list the hypervisor feature. Detecting as kvm host")
+        logger.trace("Plugin Virtualization: /sys/devices/virtual/misc/kvm present and /proc/cpuinfo does not list the hypervisor feature, or lscpu names #{hypervisor_vendor}. Detecting as kvm host")
         virtualization[:role] = "host"
         virtualization[:systems][:kvm] = "host"
       end

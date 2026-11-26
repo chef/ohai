@@ -195,6 +195,26 @@ describe Ohai::System, "Linux virtualization platform" do
     end
   end
 
+  describe "when kvm is loaded in a Hyper-V guest with nested virtualization" do
+    before do
+      allow(plugin).to receive(:file_exist?).with("/sys/devices/virtual/misc/kvm").and_return(true)
+      # the guest CPU flags used by the kvm guest example above (vmx and hypervisor)
+      allow(plugin).to receive(:file_read).with("/proc/cpuinfo").and_return("fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx rdtscp lm constant_tsc arch_perfmon rep_good nopl pni vmx ssse3 cx16 sse4_1 sse4_2 x2apic popcnt hypervisor lahf_lm vnmi ept tsc_adjust")
+      # lscpu's "Hypervisor vendor:" on a Hyper-V guest
+      # (util-linux sys-utils/lscpu.c hv_vendors)
+      plugin[:cpu] = Mash.new(hypervisor_vendor: "Microsoft", virtualization_type: "full")
+      # https://github.com/chef/dmidecode_collection/blob/main/azure
+      plugin[:dmi] = Mash.new(system: { manufacturer: "Microsoft Corporation", product_name: "Virtual Machine", version: "7.0" })
+    end
+
+    it "reports a KVM host inside a Hyper-V guest" do
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("hyperv")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems]).to eq("hyperv" => "guest", "kvm" => "host")
+    end
+  end
+
   describe "when we are checking for VirtualBox" do
     it "sets vbox host if /proc/modules contains vboxdrv" do
       expect(plugin).to receive(:file_exist?).with("/proc/modules").and_return(true)

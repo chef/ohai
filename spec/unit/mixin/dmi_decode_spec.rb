@@ -72,4 +72,15 @@ describe Ohai::Mixin::DmiDecode, "guest_from_dmi_data" do
       expect(mixin.guest_from_dmi_data("TimCorp", "SuperServer", "2018")).to be_nil
     end
   end
+
+  # systemd treats an "Amazon EC2" product name containing ".metal" followed
+  # by the end or "-" as bare metal:
+  # https://github.com/systemd/systemd/blob/3c26737bd6e24ba7e2fbeccd992ce5449d3f2ebd/src/basic/virt.c#L265-L293
+  %w{m5.metal m7i.metal-24xl}.each do |instance_type|
+    describe "when passed EC2 #{instance_type} bare metal dmi data" do
+      it "returns nil" do
+        expect(mixin.guest_from_dmi_data("Amazon EC2", instance_type, "Not Specified")).to be_nil
+      end
+    end
+  end
 end

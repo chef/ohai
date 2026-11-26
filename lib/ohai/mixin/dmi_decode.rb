@@ -29,7 +29,9 @@ module ::Ohai::Mixin::DmiDecode
     when /Microsoft/
       return "hyperv" if product.include?("Virtual Machine")
     when /Amazon EC2/
-      return "amazonec2"
+      # bare metal instances share the manufacturer; their product name is
+      # the instance type, such as m5.metal or m7i.metal-24xl
+      return "amazonec2" unless product.to_s.match?(/\.metal(-|$)/)
     when /QEMU/
       return "kvm"
     when /Veertu/

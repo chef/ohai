@@ -94,8 +94,9 @@ Ohai.plugin(:Hostname) do
   end
 
   collect_data(:darwin) do
-    hostname from_cmd("hostname -s")
     machinename from_cmd("hostname")
+    # what hostname -s prints: the name up to the first dot
+    hostname machinename.split(".").first
     fqdn resolve_fqdn
     domain collect_domain
   end

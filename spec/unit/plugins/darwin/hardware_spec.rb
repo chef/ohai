@@ -36,17 +36,10 @@ describe Ohai::System, "Darwin hardware plugin", :unix_only do
       mock_shell_out(0, combined.to_plist, "")
     )
 
-    allow(plugin).to receive(:shell_out).with(
-      "sw_vers"
-    ).and_return(
-      mock_shell_out(0, "ProductName:	Mac OS X\nProductVersion:	10.12\nBuildVersion:	16A239j", "")
-    )
-
-    allow(plugin).to receive(:shell_out).with(
-      "uname -m"
-    ).and_return(
-      mock_shell_out(0, "x86_64", "")
-    )
+    # set by the platform and kernel plugins
+    plugin[:platform_version] = "10.12"
+    plugin[:platform_build] = "16A239j"
+    plugin[:kernel] = Mash.new(machine: "x86_64")
   end
 
   it "runs system_profiler once for all data types" do
@@ -71,12 +64,25 @@ describe Ohai::System, "Darwin hardware plugin", :unix_only do
     expect(plugin["hardware"]["serial_number"]).to eq("ABCDEFG12345")
   end
 
-  it "parses sw_vers and uname data correctly" do
+  it "reports the platform and kernel data" do
     plugin.run
     expect(plugin["hardware"]["operating_system"]).to eq("Mac OS X")
     expect(plugin["hardware"]["operating_system_version"]).to eq("10.12")
     expect(plugin["hardware"]["build_version"]).to eq("16A239j")
     expect(plugin["hardware"]["architecture"]).to eq("x86_64")
+  end
+
+  it "names the operating system macOS from macOS 11 on" do
+    plugin[:platform_version] = "26.1"
+    plugin.run
+    expect(plugin["hardware"]["operating_system"]).to eq("macOS")
+    expect(plugin["hardware"]["operating_system_version"]).to eq("26.1")
+  end
+
+  it "does not run sw_vers or uname" do
+    plugin.run
+    expect(plugin).not_to have_received(:shell_out).with("sw_vers")
+    expect(plugin).not_to have_received(:shell_out).with("uname -m")
   end
 
   it "parses storage data correctly" do

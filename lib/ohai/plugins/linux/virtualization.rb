@@ -40,6 +40,17 @@ Ohai.plugin(:Virtualization) do
     which("podman")
   end
 
+  # PID 1's environment, which names the container manager (container=lxc
+  # and so on). It is readable only by root, so it is empty otherwise.
+  def init_environ
+    @init_environ ||= begin
+                        file_read("/proc/1/environ")
+                      rescue SystemCallError => e
+                        logger.trace("Plugin Virtualization: cannot read /proc/1/environ: #{e.message}")
+                        ""
+                      end
+  end
+
   collect_data(:linux) do
     virtualization Mash.new unless virtualization
     virtualization[:systems] ||= Mash.new
@@ -220,17 +231,17 @@ Ohai.plugin(:Virtualization) do
         virtualization[:system] = $1
         virtualization[:role] = "guest"
         virtualization[:systems][$1.to_sym] = "guest"
-      elsif file_read("/proc/1/environ").include?("container=lxc")
+      elsif init_environ.include?("container=lxc")
         logger.trace("Plugin Virtualization: /proc/1/environ indicates lxc container. Detecting as lxc guest")
         virtualization[:system] = "lxc"
         virtualization[:role] = "guest"
         virtualization[:systems][:lxc] = "guest"
-      elsif file_read("/proc/1/environ").include?("container=systemd-nspawn")
+      elsif init_environ.include?("container=systemd-nspawn")
         logger.trace("Plugin Virtualization: /proc/1/environ indicates nspawn container. Detecting as nspawn guest")
         virtualization[:system] = "nspawn"
         virtualization[:role] = "guest"
         virtualization[:systems][:nspawn] = "guest"
-      elsif file_read("/proc/1/environ").include?("container=podman")
+      elsif init_environ.include?("container=podman")
         logger.trace("Plugin Virtualization: /proc/1/environ indicates podman container. Detecting as podman guest")
         virtualization[:system] = "podman"
         virtualization[:role] = "guest"

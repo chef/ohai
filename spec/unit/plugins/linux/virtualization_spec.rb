@@ -498,6 +498,21 @@ describe Ohai::System, "Linux virtualization platform" do
     end
   end
 
+  describe "when /proc/1/environ is not readable (not running as root)" do
+    before do
+      allow(plugin).to receive(:file_exist?).with("/proc/self/cgroup").and_return(true)
+      allow(plugin).to receive(:file_read).with("/proc/self/cgroup").and_return("0::/user.slice/user-1000.slice/session-3.scope\n")
+      allow(plugin).to receive(:file_read).with("/proc/1/environ").and_raise(Errno::EACCES, "/proc/1/environ")
+    end
+
+    it "still runs the remaining container checks" do
+      allow(plugin).to receive(:file_exist?).with("/.dockerenv").and_return(true)
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("docker")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+    end
+  end
+
   describe "when we are checking for systemd-nspawn" do
     it "sets nspawn guest if /proc/1/environ has nspawn string in it" do
       allow(plugin).to receive(:file_exist?).with("/proc/self/cgroup").and_return(true)

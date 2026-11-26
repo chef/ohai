@@ -43,6 +43,7 @@ describe Ohai::System, "plugin powershell" do
     expect(plugin).to receive(:shell_out).once.with(/\Apowershell\.exe .*\$PSVersionTable\.GetEnumerator\(\)/).and_return(mock_shell_out(0, v51_output, ""))
     plugin.run
     expect(plugin.languages[:powershell][:version]).to eql("5.1.26100.1")
+    expect(plugin.languages[:powershell][:edition]).to eql("Desktop")
     expect(plugin.languages[:powershell][:ws_man_stack_version]).to eql("3.0")
     expect(plugin.languages[:powershell][:serialization_version]).to eql("1.1.0.1")
     expect(plugin.languages[:powershell][:clr_version]).to eql("4.0.30319.42000")
@@ -108,6 +109,58 @@ describe Ohai::System, "plugin powershell" do
       expect(plugin.logger).not_to receive(:warn)
       plugin.run
       expect(plugin.languages).not_to have_key(:powershell)
+    end
+  end
+
+  %w{darwin linux}.each do |os|
+    context "on #{os} with PowerShell 7" do
+      # $PSVersionTable from pwsh 7.7.0 on macOS 27.2
+      let(:pwsh_output) do
+        <<~END
+          PSEdition=Core
+          GitCommitId=7.7.0
+          PSRemotingProtocolVersion=2.4
+          SerializationVersion=1.1.0.1
+          PSCompatibleVersions=1.0,2.0,3.0,4.0,5.0,5.1,6.0,7.0
+          Platform=Unix
+          WSManStackVersion=3.0
+          OS=macOS 27.2.0
+          PSVersion=7.7.0
+        END
+      end
+
+      before do
+        stub_const("::RbConfig::CONFIG", { "host_os" => os })
+      end
+
+      it "runs pwsh with an argument list, so the shell can't expand the script" do
+        expect(plugin).to receive(:shell_out).once
+          .with(["pwsh", "-NoLogo", "-NonInteractive", "-NoProfile", "-Command", a_string_including("$PSVersionTable.GetEnumerator()")])
+          .and_return(mock_shell_out(0, pwsh_output, ""))
+        plugin.run
+      end
+
+      it "sets languages[:powershell]" do
+        allow(plugin).to receive(:shell_out).and_return(mock_shell_out(0, pwsh_output, ""))
+        plugin.run
+        expect(plugin.languages[:powershell][:version]).to eql("7.7.0")
+        expect(plugin.languages[:powershell][:edition]).to eql("Core")
+        expect(plugin.languages[:powershell][:compatible_versions]).to eql(["1.0", "2.0", "3.0", "4.0", "5.0", "5.1", "6.0", "7.0"])
+        expect(plugin.languages[:powershell][:remoting_protocol_version]).to eql("2.4")
+        expect(plugin.languages[:powershell][:clr_version]).to be_nil
+        expect(plugin.languages[:powershell][:build_version]).to be_nil
+      end
+
+      it "does not set languages[:powershell] when pwsh isn't installed" do
+        allow(plugin).to receive(:shell_out).and_wrap_original do
+          raise Errno::ENOENT, "pwsh"
+        rescue Errno::ENOENT => e
+          raise Ohai::Exceptions::Exec, e
+        end
+        expect(plugin.logger).not_to receive(:warn)
+        plugin.run
+        expect(plugin.languages).not_to have_key(:powershell)
+      end
     end
   end
 end

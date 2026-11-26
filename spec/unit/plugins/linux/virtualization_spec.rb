@@ -248,6 +248,17 @@ describe Ohai::System, "Linux virtualization platform" do
     end
   end
 
+  describe "when the Hyper-V KVP pool has no HostName record" do
+    it "detects a hyperv guest without a hypervisor_host" do
+      allow(plugin).to receive(:file_exist?).with("/var/lib/hyperv/.kvp_pool_3").and_return(true)
+      allow(plugin).to receive(:file_read).with("/var/lib/hyperv/.kvp_pool_3").and_return("")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("hyperv")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization]).not_to have_key("hypervisor_host")
+    end
+  end
+
   describe "when we are checking for Hyper-V guest and the hostname of the host" do
     it "sets Hyper-V guest if /var/lib/hyperv/.kvp_pool_3 contains hyper_v.example.com" do
       expect(plugin).to receive(:file_exist?).with("/var/lib/hyperv/.kvp_pool_3").and_return(true)

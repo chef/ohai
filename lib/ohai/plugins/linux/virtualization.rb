@@ -166,11 +166,12 @@ Ohai.plugin(:Virtualization) do
     if file_exist?("/var/lib/hyperv/.kvp_pool_3")
       logger.trace("Plugin Virtualization: /var/lib/hyperv/.kvp_pool_3 contains string indicating Hyper-V guest")
       data = file_read("/var/lib/hyperv/.kvp_pool_3")
-      hyperv_host = data[/\HostName(.*?)HostingSystemEditionId/, 1].scan(/[[:print:]]/).join.downcase
+      hyperv_host = data[/HostName(.*?)HostingSystemEditionId/, 1]
       virtualization[:system] = "hyperv"
       virtualization[:role] = "guest"
       virtualization[:systems][:hyperv] = "guest"
-      virtualization[:hypervisor_host] = hyperv_host
+      # the pool may be empty or partly written
+      virtualization[:hypervisor_host] = hyperv_host.scan(/[[:print:]]/).join.downcase if hyperv_host
     end
 
     # Detect Linux-VServer

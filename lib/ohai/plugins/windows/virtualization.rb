@@ -34,7 +34,8 @@ Ohai.plugin(:Virtualization) do
     wmi = WmiLite::Wmi.new
     dmi = wmi.first_of("Win32_ComputerSystemProduct")
 
-    guest = guest_from_dmi_data(dmi["vendor"], dmi["name"], dmi["version"])
+    # the query can return no instance; there is no DMI data to match then
+    guest = dmi && guest_from_dmi_data(dmi["vendor"], dmi["name"], dmi["version"])
     if guest
       logger.trace("Plugin Virtualization: DMI data in Win32_ComputerSystemProduct indicates #{guest} guest")
       virtualization[:system] = guest

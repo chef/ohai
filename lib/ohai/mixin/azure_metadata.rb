@@ -37,40 +37,72 @@ module Ohai
 
       AZURE_METADATA_ADDR ||= "169.254.169.254"
 
-      # it's important that the newer versions are at the end of this array so we can skip sorting it
+      # Azure sets this SMBIOS chassis asset tag on every VM. It comes from
+      # the hypervisor, so unlike the agent or a DHCP lease it doesn't survive
+      # moving a disk to another cloud. cloud-init's ds-identify uses it too.
+      AZURE_CHASSIS_ASSET_TAG ||= "7783-7084-3265-9085-8269-3286-77"
+
+      # where WALinuxAgent installs waagent: most distros, Azure Linux and
+      # Mariner, FreeBSD and OpenBSD, Flatcar
+      WAAGENT_PATHS ||= %w{/usr/sbin/waagent /usr/bin/waagent /usr/local/sbin/waagent /usr/share/oem/bin/waagent}.freeze
+
+      # Known versions, newest last. IMDS lists the versions it supports when
+      # asked without one, and Ohai uses the newest of those; this list is the
+      # fallback when that list can't be read.
+      # https://learn.microsoft.com/en-us/azure/virtual-machines/instance-metadata-service#supported-api-versions
       AZURE_SUPPORTED_VERSIONS ||= %w{ 2018-10-01 2019-02-01 2019-03-11 2019-04-30 2019-06-01
                                        2019-06-04 2019-08-01 2019-08-15 2019-11-01 2020-06-01
                                        2020-07-15 2020-09-01 2020-10-01 2020-12-01 2021-01-01
-                                       2021-02-01 2021-03-01 2021-05-01 2021-10-01 2021-11-01
-                                       2021-11-15 2021-12-13 2023-07-01 }.freeze
+                                       2021-02-01 2021-03-01 2021-05-01 2021-08-01 2021-10-01
+                                       2021-11-01 2021-11-15 2021-12-13 2023-07-01 2023-11-15
+                                       2024-03-15 2024-07-17 2025-04-07 2025-11-15 2026-06-23
+                                       2026-07-20 }.freeze
+
+      # IMDS answers 410 while a VM is starting, 429 when callers exceed its
+      # rate limit and 500 on transient errors; all are worth retrying
+      AZURE_RETRY_CODES ||= %w{410 429 500 503}.freeze
+      AZURE_MAX_ATTEMPTS ||= 3
 
       def best_api_version
         @api_version ||= begin
           logger.trace("Mixin AzureMetadata: Fetching http://#{AZURE_METADATA_ADDR}/metadata/instance to determine the latest supported metadata release")
-          response = http_get("/metadata/instance")
+          response = http_get_with_retry("/metadata/instance")
           if response.code == "404"
             logger.trace("Mixin AzureMetadata: Received HTTP 404 from metadata server while determining API version, assuming #{AZURE_SUPPORTED_VERSIONS.last}")
-            return AZURE_SUPPORTED_VERSIONS.last
+            AZURE_SUPPORTED_VERSIONS.last
           elsif response.code != "400" # 400 is actually what we want
             raise "Mixin AzureMetadata: Unable to determine Azure metadata version (returned #{response.code} response)"
+          else
+            # Azure returns the 3 newest versions it supports. Use the newest
+            # one even if Ohai doesn't list it: the instance document only
+            # gains fields between versions, and an allowlist that lags
+            # behind IMDS hides them (physicalZone needs 2023-11-15).
+            versions = Array((parse_json(response.body) || {})["newest-versions"]).sort
+            if versions.empty?
+              logger.debug "Mixin AzureMetadata: The Azure Instance Metadata service listed no versions. Using the latest release known to Ohai: #{AZURE_SUPPORTED_VERSIONS.last}"
+              AZURE_SUPPORTED_VERSIONS.last
+            else
+              logger.trace("Mixin AzureMetadata: Latest Azure metadata version: #{versions.last}")
+              versions.last
+            end
           end
+        end
+      end
 
-          # azure returns a list of the 3 latest versions it supports
-          versions = parse_json(response.body).fetch("newest-versions", [])
-          versions.sort!
+      # http_get, retrying the responses IMDS documents as transient
+      #
+      # @param [String] the relative uri to fetch from the Azure Metadata Service URL
+      #
+      # @return [Net::HTTPResponse] the last response
+      def http_get_with_retry(uri)
+        attempt = 0
+        loop do
+          attempt += 1
+          response = http_get(uri)
+          return response unless AZURE_RETRY_CODES.include?(response.code) && attempt < AZURE_MAX_ATTEMPTS
 
-          until versions.empty? || AZURE_SUPPORTED_VERSIONS.include?(versions.last)
-            pv = versions.pop
-            logger.trace("Mixin AzureMetadata: Azure metadata version #{pv} is not present in the versions provided by the Azure Instance Metadata service")
-          end
-
-          if versions.empty?
-            logger.debug "Mixin AzureMetadata: The short list of supported versions provided by Azure Instance Metadata service doesn't match any known versions to Ohai. Using the latest supported release known to Ohai instead: #{AZURE_SUPPORTED_VERSIONS.last}"
-            return AZURE_SUPPORTED_VERSIONS.last
-          end
-
-          logger.trace("Mixin AzureMetadata: Latest supported Azure metadata version: #{versions.last}")
-          versions.last
+          logger.trace("Mixin AzureMetadata: Received HTTP #{response.code} for #{uri}, retrying")
+          sleep(attempt)
         end
       end
 
@@ -88,10 +120,26 @@ module Ohai
         conn.get(uri, { "Metadata" => "true" })
       end
 
+      # Standard SKU public IPs, the only SKU Azure still offers, are missing
+      # from the instance document's publicIpAddress. IMDS lists them under
+      # /metadata/loadbalancer (API 2020-10-01 or newer), whether the VM is
+      # behind a load balancer or has the address attached directly.
+      #
+      # @return [Hash, nil] the parsed response, or nil when IMDS has none
+      def fetch_loadbalancer_metadata
+        uri = "/metadata/loadbalancer?api-version=#{best_api_version}"
+        logger.trace("Mixin AzureMetadata: Fetching load balancer metadata from host #{AZURE_METADATA_ADDR} at #{uri}")
+        response = http_get_with_retry(uri)
+        return parse_json(response.body) if response.code == "200"
+
+        logger.trace("Mixin AzureMetadata: Received response code #{response.code} requesting load balancer metadata")
+        nil
+      end
+
       def fetch_metadata(_api_version = nil)
         metadata_url = "/metadata/instance?api-version=#{best_api_version}"
         logger.trace("Mixin AzureMetadata: Fetching metadata from host #{AZURE_METADATA_ADDR} at #{metadata_url}")
-        response = http_get(metadata_url)
+        response = http_get_with_retry(metadata_url)
         if response.code == "200"
           json_data = parse_json(response.body)
           if json_data.nil?

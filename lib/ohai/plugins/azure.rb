@@ -18,9 +18,11 @@
 Ohai.plugin(:Azure) do
   require_relative "../mixin/azure_metadata"
   require_relative "../mixin/http_helper"
+  require_relative "../mixin/smbios"
 
   include Ohai::Mixin::AzureMetadata
   include Ohai::Mixin::HttpHelper
+  include Ohai::Mixin::Smbios
 
   provides "azure"
 
@@ -34,6 +36,10 @@ Ohai.plugin(:Azure) do
       logger.trace("Plugin Azure: Azure hint is present. Parsing any hint data.")
       azure Mash.new
       azure_metadata_from_hints.each { |k, v| azure[k] = v }
+      azure["metadata"] = parse_metadata
+    elsif has_azure_chassis_asset_tag?
+      logger.trace("Plugin Azure: No hints present, but the Azure chassis asset tag is.")
+      azure Mash.new
       azure["metadata"] = parse_metadata
     elsif has_waagent? || has_dhcp_option_245? || has_reddog_dhcp_domain?
       metadata = parse_metadata
@@ -55,8 +61,17 @@ Ohai.plugin(:Azure) do
 
   # check for either the waagent or the unknown-245 DHCP option that Azure uses
   # http://blog.mszcool.com/index.php/2015/04/detecting-if-a-virtual-machine-runs-in-microsoft-azure-linux-windows-to-protect-your-software-when-distributed-via-the-azure-marketplace/
+  def has_azure_chassis_asset_tag?
+    if smbios_value(:chassis_asset_tag) == Ohai::Mixin::AzureMetadata::AZURE_CHASSIS_ASSET_TAG
+      logger.trace("Plugin Azure: Found the Azure chassis asset tag.")
+      true
+    else
+      false
+    end
+  end
+
   def has_waagent?
-    if file_exist?("/usr/sbin/waagent") || dir_exist?("C:\\WindowsAzure")
+    if Ohai::Mixin::AzureMetadata::WAAGENT_PATHS.any? { |path| file_exist?(path) } || dir_exist?("C:\\WindowsAzure")
       logger.trace("Plugin Azure: Found waagent used by Azure.")
       true
     end
@@ -114,13 +129,13 @@ Ohai.plugin(:Azure) do
     metadata
   end
 
+  # an interface can lack an address family, and an address can lack a
+  # public IP (it is an empty string or missing)
   def fetch_ip_data(data, type, field)
-    ips = []
-
-    data[type]["ipAddress"].each do |val|
-      ips << val[field] unless val[field].empty?
+    Array(data.dig(type, "ipAddress")).filter_map do |val|
+      ip = val[field]
+      ip unless ip.nil? || ip.empty?
     end
-    ips
   end
 
   # EC2 and other clouds run their own metadata service on the same link-local
@@ -139,13 +154,20 @@ Ohai.plugin(:Azure) do
     @metadata_endpoint_reachable = can_socket_connect?(Ohai::Mixin::AzureMetadata::AZURE_METADATA_ADDR, 80)
     return nil unless @metadata_endpoint_reachable
 
-    endpoint_data = fetch_metadata
+    endpoint_data = begin
+                      fetch_metadata
+                    rescue => e
+                      # a transient metadata service error shouldn't drop azure
+                      # data the agent, asset tag or hint already established
+                      logger.warn("Plugin Azure: Unable to fetch Azure metadata: #{e.class}: #{e.message}")
+                      nil
+                    end
     return nil if endpoint_data.nil?
 
     metadata = initialize_metadata_mash_compute
 
     # blindly add everything in compute to our data structure
-    endpoint_data["compute"].each do |k, v|
+    (endpoint_data["compute"] || {}).each do |k, v|
       metadata["compute"][k] = v
     end
 
@@ -153,7 +175,7 @@ Ohai.plugin(:Azure) do
     unless endpoint_data["network"].nil?
       metadata = initialize_metadata_mash_network(metadata)
       # parse out per interface interface IP data
-      endpoint_data["network"]["interface"].each do |int|
+      Array(endpoint_data["network"]["interface"]).each do |int|
         metadata["network"]["interfaces"][int["macAddress"]] = Mash.new
         metadata["network"]["interfaces"][int["macAddress"]]["mac"] = int["macAddress"]
         metadata["network"]["interfaces"][int["macAddress"]]["public_ipv6"] = fetch_ip_data(int, "ipv6", "publicIpAddress")
@@ -168,8 +190,40 @@ Ohai.plugin(:Azure) do
           metadata["network"][type].concat val[type] unless val[type].empty?
         end
       end
+
+      if metadata["network"]["public_ipv4"].empty? && metadata["network"]["public_ipv6"].empty?
+        add_loadbalancer_public_ips(metadata)
+      end
     end
 
     metadata
+  end
+
+  # Add the Standard SKU public IPs that IMDS only lists under
+  # /metadata/loadbalancer to the interface that owns each private IP and to
+  # the network totals, and keep the load balancer data itself
+  def add_loadbalancer_public_ips(metadata)
+    data = begin
+             fetch_loadbalancer_metadata
+           rescue => e
+             logger.trace("Plugin Azure: Unable to fetch load balancer metadata: #{e.class}: #{e.message}")
+             nil
+           end
+    loadbalancer = data["loadbalancer"] if data.is_a?(Hash)
+    return unless loadbalancer.is_a?(Hash)
+
+    metadata["loadbalancer"] = loadbalancer
+    Array(loadbalancer["publicIpAddresses"]).each do |address|
+      public_ip = address["frontendIpAddress"]
+      next if public_ip.nil? || public_ip.empty?
+
+      family = public_ip.include?(":") ? "ipv6" : "ipv4"
+      metadata["network"]["public_#{family}"] << public_ip unless metadata["network"]["public_#{family}"].include?(public_ip)
+      metadata["network"]["interfaces"].each_value do |interface|
+        next unless interface["local_#{family}"].include?(address["privateIpAddress"])
+
+        interface["public_#{family}"] << public_ip unless interface["public_#{family}"].include?(public_ip)
+      end
+    end
   end
 end

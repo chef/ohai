@@ -23,7 +23,8 @@ Ohai.plugin(:Virtualization) do
   collect_data(:aix) do
     virtualization Mash.new
 
-    lpar_no, lpar_name = shell_out("uname -L").stdout.split(nil, 2)
+    # uname -L prints "<number> <name>\n"; -1 NULL (or 1 NULL) without a partition
+    lpar_no, lpar_name = shell_out("uname -L").stdout.strip.split(nil, 2)
     lpar_no = lpar_no.to_i
 
     unless lpar_no == -1 || (lpar_no == 1 && lpar_name == "NULL")

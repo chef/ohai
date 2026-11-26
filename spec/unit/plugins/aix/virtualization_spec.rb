@@ -317,4 +317,31 @@ describe Ohai::System, "AIX virtualization plugin" do
       expect(plugin[:virtualization][:wpar_no]).to eq(42)
     end
   end
+
+  # uname -L output ends with a newline, like any command output
+  context "when uname -L output ends with a newline" do
+    def plugin_with_uname_l(output)
+      p = get_plugin("aix/virtualization")
+      allow(p).to receive(:collect_os).and_return(:aix)
+      allow(p).to receive(:shell_out).with("uname -L").and_return(mock_shell_out(0, output, nil))
+      allow(p).to receive(:shell_out).with("uname -W").and_return(mock_shell_out(0, "0\n", nil))
+      allow(p).to receive(:shell_out).with("lswpar -L").and_return(mock_shell_out(0, "", nil))
+      p.run
+      p
+    end
+
+    it "reports the LPAR name without the newline" do
+      plugin = plugin_with_uname_l("29 virtlpar03 - 7.1 testers\n")
+      expect(plugin[:virtualization][:lpar_no]).to eq(29)
+      expect(plugin[:virtualization][:lpar_name]).to eq("virtlpar03 - 7.1 testers")
+    end
+
+    ["-1 NULL\n", "1 NULL\n"].each do |output|
+      it "reports no LPAR for #{output.inspect}" do
+        plugin = plugin_with_uname_l(output)
+        expect(plugin[:virtualization]).not_to have_key("lpar_no")
+        expect(plugin[:virtualization]).not_to have_key("lpar_name")
+      end
+    end
+  end
 end

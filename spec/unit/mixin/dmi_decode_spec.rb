@@ -67,6 +67,66 @@ describe Ohai::Mixin::DmiDecode, "guest_from_dmi_data" do
     end
   end
 
+  # dmidecode System Information from virt-what 1.27's tests/google-cloud
+  describe "when running on Google Compute Engine" do
+    it "returns 'gce'" do
+      expect(mixin.guest_from_dmi_data("Google", "Google Compute Engine", "Not Specified")).to eq("gce")
+    end
+  end
+
+  # dmidecode System Information from virt-what 1.27's tests/alibaba-cloud-x86
+  # and tests/alibaba-cloud-arm
+  describe "when running on Alibaba Cloud ECS" do
+    it "returns 'alibaba' on x86" do
+      expect(mixin.guest_from_dmi_data("Alibaba Cloud", "Alibaba Cloud ECS", "pc-i440fx-2.1")).to eq("alibaba")
+    end
+
+    it "returns 'alibaba' on arm64" do
+      expect(mixin.guest_from_dmi_data("Alibaba Cloud", "Alibaba Cloud ECS", "virt-rhel7.6.0")).to eq("alibaba")
+    end
+  end
+
+  # KubeVirt's default SMBIOS manufacturer and product (pkg/virt-config/virt-config.go)
+  describe "when running on KubeVirt" do
+    it "returns 'kvm'" do
+      expect(mixin.guest_from_dmi_data("KubeVirt", "None", nil)).to eq("kvm")
+    end
+  end
+
+  # dmidecode System Information from virt-what 1.27's tests/nutanix-ahv
+  describe "when running on Nutanix AHV" do
+    it "returns 'kvm'" do
+      expect(mixin.guest_from_dmi_data("Nutanix", "AHV", "RHEL 7.3.0 PC (i440FX + PIIX, 1996)")).to eq("kvm")
+    end
+
+    it "returns nil when the Nutanix product isn't AHV" do
+      expect(mixin.guest_from_dmi_data("Nutanix", nil, nil)).to be_nil
+    end
+  end
+
+  # the SMBIOS system entry vdsm gives an oVirt guest (vdsm tests/virt/data/domain.xml)
+  describe "when running on oVirt" do
+    it "returns 'kvm'" do
+      expect(mixin.guest_from_dmi_data("oVirt", "oVirt Node", "7-2.1511.el7.centos.2.10")).to eq("kvm")
+    end
+  end
+
+  # SeaBIOS's legacy SMBIOS table: manufacturer and product default to
+  # BUILD_APPNAME (src/config.h), and the version is left unset
+  describe "when running on Bochs" do
+    it "returns 'bochs'" do
+      expect(mixin.guest_from_dmi_data("Bochs", "Bochs", "Not Specified")).to eq("bochs")
+    end
+  end
+
+  # VirtualBox's default system vendor (src/VBox/Devices/PC/DevFwCommon.cpp)
+  # with the host's product name, as DmiUseHostInfo sets it
+  describe "when running on VirtualBox with the host's product name" do
+    it "returns 'vbox'" do
+      expect(mixin.guest_from_dmi_data("innotek GmbH", "MacBookPro16,1", "1.0")).to eq("vbox")
+    end
+  end
+
   describe "When running on an unkown system" do
     it "returns nil" do
       expect(mixin.guest_from_dmi_data("TimCorp", "SuperServer", "2018")).to be_nil

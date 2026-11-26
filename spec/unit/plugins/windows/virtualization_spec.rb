@@ -46,6 +46,22 @@ describe Ohai::System, "Windows virtualization platform" do
     end
   end
 
+  # Win32_ComputerSystemProduct reports the SMBIOS System Information
+  # strings; these are the GCE ones from virt-what 1.27's tests/google-cloud
+  context "when running on Google Compute Engine" do
+    it "sets gce guest" do
+      allow(wmi).to receive(:first_of).with("Win32_ComputerSystemProduct").and_return({ "caption" => "Computer System Product",
+                                                                                        "description" => "Computer System Product",
+                                                                                        "name" => "Google Compute Engine",
+                                                                                        "vendor" => "Google",
+                                                                                        "version" => "Not Specified" })
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("gce")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:gce]).to eq("guest")
+    end
+  end
+
   context "when running on a hardware system" do
     it "does not set virtualization attributes" do
       allow(wmi).to receive(:first_of).with("Win32_ComputerSystemProduct").and_return({ "caption" => "Computer System Product",

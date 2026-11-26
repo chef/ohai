@@ -97,6 +97,91 @@ describe Ohai::System, "Linux virtualization platform" do
     end
   end
 
+  # every example runs the device tree check, so default it to a system without one
+  before do
+    allow(plugin).to receive(:file_exist?).with("/proc/device-tree").and_return(false)
+  end
+
+  describe "when we are checking the device tree" do
+    # Device tree string properties are NUL-terminated, and a list of strings
+    # is several of them back to back. The values are the ones the hypervisors
+    # write: QEMU's hw/ppc/spapr.c and hw/arm/virt.c, kvmtool's arm64/fdt.c,
+    # the Xen binding example in the kernel's
+    # Documentation/devicetree/bindings/arm/xen.txt, and the VMware value from
+    # virt-what 1.27's tests/esx-arm.
+    def device_tree(nodes:, compatible: nil, hypervisor: nil)
+      allow(plugin).to receive(:file_exist?).with("/proc/device-tree").and_return(true)
+      allow(plugin).to receive(:file_exist?).with("/proc/device-tree/hypervisor/compatible").and_return(!hypervisor.nil?)
+      allow(plugin).to receive(:file_read).with("/proc/device-tree/hypervisor/compatible").and_return(hypervisor)
+      allow(plugin).to receive(:file_exist?).with("/proc/device-tree/compatible").and_return(!compatible.nil?)
+      allow(plugin).to receive(:file_read).with("/proc/device-tree/compatible").and_return(compatible)
+      allow(plugin).to receive(:dir_glob).with("/proc/device-tree/*").and_return(nodes.map { |n| "/proc/device-tree/#{n}" })
+    end
+
+    it "sets kvm guest from a linux,kvm hypervisor node (QEMU pseries under KVM)" do
+      device_tree(nodes: %w{compatible hypervisor model}, compatible: "qemu,pseries\0", hypervisor: "linux,kvm\0")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("kvm")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
+    end
+
+    it "sets xen guest from a xen hypervisor node" do
+      device_tree(nodes: %w{chosen compatible hypervisor}, hypervisor: "xen,xen-4.3\0xen,xen\0")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("xen")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:xen]).to eq("guest")
+    end
+
+    it "sets vmware guest from a vmware hypervisor node" do
+      device_tree(nodes: %w{chosen compatible hypervisor}, hypervisor: "vmware\0")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("vmware")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:vmware]).to eq("guest")
+    end
+
+    it "sets kvm guest from QEMU's fw-cfg node on the arm virt machine" do
+      device_tree(nodes: %w{chosen compatible fw-cfg@9020000 model timer}, compatible: "linux,dummy-virt\0")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("kvm")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
+    end
+
+    it "sets kvm guest from QEMU's pseries machine without KVM" do
+      device_tree(nodes: %w{compatible model}, compatible: "qemu,pseries\0")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("kvm")
+      expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
+    end
+
+    it "sets vm-other guest for a linux,dummy-virt machine without fw-cfg (kvmtool)" do
+      device_tree(nodes: %w{aliases chosen compatible cpus memory psci}, compatible: "linux,dummy-virt\0")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("vm-other")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems]["vm-other"]).to eq("guest")
+    end
+
+    it "does not set virtualization for a Raspberry Pi 4's device tree" do
+      # compatible from the kernel's arch/arm/boot/dts/broadcom/bcm2711-rpi-4-b.dts
+      device_tree(nodes: %w{aliases chosen compatible cpus memory@0 model}, compatible: "raspberrypi,4-model-b\0brcm,bcm2711\0")
+      plugin.run
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
+    end
+
+    it "leaves a guest found in DMI alone" do
+      # dmidecode System Information from virt-what 1.27's tests/qemu-smbios-kvm
+      plugin[:dmi] = { system: { manufacturer: "QEMU", product_name: "KVM Virtual Machine", version: "1.0" } }
+      expect(plugin).not_to receive(:guest_from_device_tree)
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("kvm")
+      expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
+    end
+  end
+
   describe "when we are checking for podman" do
     it "sets podman host if docker binary exists" do
       allow(plugin).to receive(:which).with("podman").and_return(true)

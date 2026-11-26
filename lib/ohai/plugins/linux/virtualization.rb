@@ -148,6 +148,18 @@ Ohai.plugin(:Virtualization) do
       virtualization[:systems][guest.to_sym] = "guest"
     end
 
+    # Fall back to the device tree on architectures without DMI. A guest
+    # found by any check above is more specific, so leave it alone.
+    unless virtualization[:systems].value?("guest")
+      dt_guest = guest_from_device_tree
+      if dt_guest
+        logger.trace("Plugin Virtualization: /proc/device-tree indicates #{dt_guest} guest")
+        virtualization[:system] = dt_guest
+        virtualization[:role] = "guest"
+        virtualization[:systems][dt_guest.to_sym] = "guest"
+      end
+    end
+
     # Detect OpenVZ / Virtuozzo.
     # http://wiki.openvz.org/BC_proc_entries
     if file_exist?("/proc/bc/0")
@@ -295,6 +307,38 @@ Ohai.plugin(:Virtualization) do
           break
         end
       end
+    end
+  end
+
+  # arm64, ppc64le and riscv64 VMs often have no DMI data and no hypervisor
+  # CPUID leaf, but the device tree the hypervisor hands the guest names it.
+  # These are the checks systemd's detect_vm_device_tree() makes. Device tree
+  # string properties are lists of NUL-terminated strings.
+  #
+  # @return [String, nil] the guest system, or nil if the device tree names none
+  def guest_from_device_tree
+    return nil unless file_exist?("/proc/device-tree")
+
+    if file_exist?("/proc/device-tree/hypervisor/compatible")
+      compatible = file_read("/proc/device-tree/hypervisor/compatible").split("\0")
+      return "kvm" if compatible.include?("linux,kvm") # QEMU adds this node to pseries guests under KVM
+      return "xen" if compatible.any? { |c| c.include?("xen") }
+      return "vmware" if compatible.any? { |c| c.include?("vmware") }
+
+      return "vm-other"
+    end
+
+    # QEMU's arm and riscv virt machines add a fw-cfg node. Ohai reports QEMU
+    # guests as kvm.
+    return "kvm" if dir_glob("/proc/device-tree/*").any? { |node| File.basename(node).include?("fw-cfg") }
+
+    return nil unless file_exist?("/proc/device-tree/compatible")
+
+    case file_read("/proc/device-tree/compatible").split("\0").first
+    when "qemu,pseries" # QEMU's pseries machine without KVM, so without the node above
+      "kvm"
+    when "linux,dummy-virt" # a virt machine without fw-cfg, such as kvmtool
+      "vm-other"
     end
   end
 end

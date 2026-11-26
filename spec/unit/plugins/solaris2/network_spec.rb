@@ -198,4 +198,86 @@ describe Ohai::System, "Solaris2.X network plugin" do
       expect(@plugin[:network][:default_interface]).to eq("e1000g0")
     end
   end
+
+  # Oracle Solaris 11.4 on an OCI VM.Standard.E5.Flex, addresses and MACs
+  # replaced. ifconfig lists each interface once per address family; net0
+  # has no IPv6 address, so its IPv6 stanza isn't UP and shows "inet6 ::/0".
+  describe "on Oracle Solaris 11.4 with an interface that has no IPv6 address" do
+    let(:ifconfig) do
+      [
+        "lo0: flags=2001000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv4,VIRTUAL> mtu 8232 index 1",
+        "\tinet 127.0.0.1 netmask ff000000 ",
+        "net0: flags=100001004843<UP,BROADCAST,RUNNING,MULTICAST,DHCP,IPv4,PHYSRUNNING> mtu 9000 index 2",
+        "\tinet 10.0.1.12 netmask ffffff00 broadcast 10.0.1.255",
+        "lo0: flags=2002000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv6,VIRTUAL> mtu 8252 index 1",
+        "\tinet6 ::1/128 ",
+        "net0: flags=120002000840<RUNNING,MULTICAST,IPv6,PHYSRUNNING> mtu 9000 index 2",
+        "\tinet6 ::/0 ",
+      ].join("\n") + "\n"
+    end
+
+    let(:arp) do
+      [
+        "Net to Media Table: IPv4",
+        "Device   IP Address               Mask      Flags      Phys Addr",
+        "------ -------------------- --------------- -------- ---------------",
+        "net0   169.254.169.254      255.255.255.255          00:00:17:00:00:fe",
+        "net0   10.0.1.12           255.255.255.255 SPLA     02:00:17:00:00:01",
+        "net0   10.0.1.1            255.255.255.255          00:00:17:00:00:fe",
+      ].join("\n") + "\n"
+    end
+
+    let(:route_get) do
+      [
+        "newrt->ri_dst: inet 0.0.0.0; newrt->ri_mask: inet 0.0.0.0; newrt->ri_ifp: link ; RTM_GET: Report Metrics: len 360, pid: 0, seq 1, errno 0, flags:<GATEWAY,STATIC>",
+        "locks:  inits: ",
+        "sockaddrs: <DST,NETMASK,IFP>",
+        " default default ",
+        "   route to: default",
+        "destination: default",
+        "       mask: default",
+        "    gateway: 10.0.1.1",
+        "  interface: net0 index 2 address 02 00 17 00 00 01 ",
+        "      flags: <UP,GATEWAY,DONE,STATIC>",
+        " recvpipe  sendpipe  ssthresh    rtt,ms rttvar,ms  hopcount      mtu     expire",
+        "       0         0         0         0         0         0      9000         0 ",
+        "locks:  inits: <rttvar,rtt,ssthresh,sendpipe,recvpipe,mtu>",
+        "sockaddrs: <DST,GATEWAY,NETMASK,IFP,IFA>",
+        " default 10.0.1.1 default net0:2.0.17.0.0.1 10.0.1.12",
+      ].join("\n") + "\n"
+    end
+
+    before do
+      allow(@plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, ifconfig, ""))
+      allow(@plugin).to receive(:shell_out).with("arp -an").and_return(mock_shell_out(0, arp, ""))
+      allow(@plugin).to receive(:shell_out).with("route -v -n get default").and_return(mock_shell_out(0, route_get, ""))
+      @plugin.run
+    end
+
+    it "keeps the IPv4 stanza's flags and adds the IPv6 stanza's" do
+      expect(@plugin[:network][:interfaces][:net0][:flags]).to eq(%w{UP BROADCAST RUNNING MULTICAST DHCP IPv4 PHYSRUNNING IPv6})
+    end
+
+    it "keeps the IPv4 stanza's MTU" do
+      expect(@plugin[:network][:interfaces][:lo0][:mtu]).to eq("8232")
+      expect(@plugin[:network][:interfaces][:net0][:mtu]).to eq("9000")
+    end
+
+    it "doesn't report the ::/0 placeholder as an address" do
+      expect(@plugin[:network][:interfaces][:net0][:addresses]).to eq(
+        "10.0.1.12" => { "family" => "inet", "netmask" => "255.255.255.0", "broadcast" => "10.0.1.255" },
+        "02:00:17:00:00:01" => { "family" => "lladdr" }
+      )
+    end
+
+    it "keeps the loopback's IPv6 address" do
+      expect(@plugin[:network][:interfaces][:lo0][:addresses]["::1"]).to eq("family" => "inet6", "prefixlen" => "128")
+    end
+
+    it "reads the ARP table and the default route" do
+      expect(@plugin[:network][:interfaces][:net0][:arp]).to eq("169.254.169.254" => "00:00:17:00:00:fe", "10.0.1.12" => "02:00:17:00:00:01", "10.0.1.1" => "00:00:17:00:00:fe")
+      expect(@plugin[:network][:default_interface]).to eq("net0")
+      expect(@plugin[:network][:default_gateway]).to eq("10.0.1.1")
+    end
+  end
 end

@@ -269,6 +269,34 @@ describe Ohai::System, "Linux plugin platform" do
       end
     end
 
+    # Gentoo 2.18, from the gentoo/stage3 image (2026-11)
+    context "when os-release values are single-quoted" do
+      let(:os_data) do
+        <<~OS_DATA
+          NAME='Gentoo'
+          ID='gentoo'
+          PRETTY_NAME='Gentoo Linux'
+          VERSION='2.18'
+          VERSION_ID='2.18'
+          HOME_URL='https://www.gentoo.org/'
+          SUPPORT_URL='https://www.gentoo.org/support/'
+          BUG_REPORT_URL='https://bugs.gentoo.org/'
+          ANSI_COLOR='1;32'
+        OS_DATA
+      end
+
+      before do
+        expect(plugin).to receive(:file_read).with("/etc/os-release").and_return(os_data)
+      end
+
+      it "strips the quotes from platform and platform_version" do
+        plugin.run
+        expect(plugin[:platform]).to eq("gentoo")
+        expect(plugin[:platform_family]).to eq("gentoo")
+        expect(plugin[:platform_version]).to eq("2.18")
+      end
+    end
+
     context "when platform requires remapping" do
       let(:os_data) do
         <<~OS_DATA

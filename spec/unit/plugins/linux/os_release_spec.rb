@@ -129,6 +129,21 @@ describe Ohai::System, "Linux os_release plugin" do
     OS_RELEASE
   end
 
+  # Gentoo 2.18, from the gentoo/stage3 image (2026-11)
+  let(:os_release_gentoo) do
+    <<~OS_RELEASE
+      NAME='Gentoo'
+      ID='gentoo'
+      PRETTY_NAME='Gentoo Linux'
+      VERSION='2.18'
+      VERSION_ID='2.18'
+      HOME_URL='https://www.gentoo.org/'
+      SUPPORT_URL='https://www.gentoo.org/support/'
+      BUG_REPORT_URL='https://bugs.gentoo.org/'
+      ANSI_COLOR='1;32'
+    OS_RELEASE
+  end
+
   it "populates os_release on debian" do
     expect(plugin).to receive(:file_exist?).at_least(:once).with("/etc/os-release").and_return(true)
     expect(plugin).to receive(:file_read).with("/etc/os-release").and_return(os_release_debian)
@@ -248,6 +263,23 @@ describe Ohai::System, "Linux os_release plugin" do
       "pretty_name" => "openSUSE Leap 15.2",
       "version" => "15.2",
       "version_id" => "15.2",
+    })
+  end
+
+  it "populates os_release on gentoo, which single-quotes its values" do
+    expect(plugin).to receive(:file_exist?).at_least(:once).with("/etc/os-release").and_return(true)
+    expect(plugin).to receive(:file_read).with("/etc/os-release").and_return(os_release_gentoo)
+    plugin.run
+    expect(plugin[:os_release].to_hash).to eq({
+      "ansi_color" => "1;32",
+      "bug_report_url" => "https://bugs.gentoo.org/",
+      "home_url" => "https://www.gentoo.org/",
+      "id" => "gentoo",
+      "name" => "Gentoo",
+      "pretty_name" => "Gentoo Linux",
+      "support_url" => "https://www.gentoo.org/support/",
+      "version" => "2.18",
+      "version_id" => "2.18",
     })
   end
 

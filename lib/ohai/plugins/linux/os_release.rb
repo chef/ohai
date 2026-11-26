@@ -28,9 +28,9 @@ Ohai.plugin(:OsRelease) do
       file_read("/etc/os-release").each_line do |line|
         key, value = line.split("=")
         if key == "ID_LIKE"
-          os_release[key.downcase] = value.chomp.gsub(/\A"|"\Z/, "").split(" ") if value
+          os_release[key.downcase] = value.chomp.gsub(/\A["']|["']\Z/, "").split(" ") if value
         else
-          os_release[key.downcase] = value.chomp.gsub(/\A"|"\Z/, "") if value
+          os_release[key.downcase] = value.chomp.gsub(/\A["']|["']\Z/, "") if value
         end
       end
     end

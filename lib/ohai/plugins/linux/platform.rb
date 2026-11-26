@@ -48,7 +48,7 @@ Ohai.plugin(:Platform) do
 
     file_read(file).split.inject({}) do |map, line|
       key, value = line.split("=")
-      map[key] = value.gsub(/\A"|"\Z/, "") if value
+      map[key] = value.gsub(/\A["']|["']\Z/, "") if value
       map
     end
   end

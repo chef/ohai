@@ -160,7 +160,7 @@ Ohai.plugin(:Platform) do
       "wrlinux"
     when /gentoo/
       "gentoo"
-    when /arch/, /manjaro/
+    when /arch/, /manjaro/, /endeavouros/, /cachyos/, /garuda/
       "arch"
     when /exherbo/
       "exherbo"

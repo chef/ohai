@@ -536,10 +536,14 @@ Ohai.plugin(:Network) do
     end
   end
 
+  # link/ether 52:54:00:12:34:56 brd ff:ff:ff:ff:ff:ff, or for a layer 3
+  # tunnel, its local endpoint instead of a MAC address:
+  #   link/gre 192.0.2.1 peer 192.0.2.2
+  #   link/tunnel6 2001:db8:8::1 peer 2001:db8:8::2
   def parse_ip_addr_link_line(cint, iface, line)
-    if line =~ %r{link/(\w+) ([\da-f\:]+) }
+    if line =~ %r{link/(\w+) ([\da-f:.]+) }
       iface[cint][:encapsulation] = linux_encaps_lookup($1)
-      unless $2 == "00:00:00:00:00:00"
+      if $2.match?(/\A\h\h(:\h\h)+\z/) && $2 != "00:00:00:00:00:00"
         iface[cint][:addresses] ||= Mash.new
         iface[cint][:addresses][$2.upcase] = { "family" => "lladdr" }
       end

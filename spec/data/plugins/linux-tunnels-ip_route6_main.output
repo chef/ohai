@@ -1,0 +1,11 @@
+2001:db8:8::/64 dev v0 proto kernel metric 256 pref medium
+2001:db8:9::/64 dev ip6tnl1 proto kernel metric 256 pref medium
+fe80::/64 dev v0 proto kernel metric 256 pref medium
+fe80::/64 dev gre1 proto kernel metric 256 pref medium
+fe80::/64 dev gretap1 proto kernel metric 256 pref medium
+fe80::/64 dev ipip1 proto kernel metric 256 pref medium
+fe80::/64 dev sit1 proto kernel metric 256 pref medium
+fe80::/64 dev ip6tnl1 proto kernel metric 256 pref medium
+fe80::/64 dev ip6gre1 proto kernel metric 256 pref medium
+fe80::/64 dev gnv1 proto kernel metric 256 pref medium
+fe80::/64 dev vx1 proto kernel metric 256 pref medium

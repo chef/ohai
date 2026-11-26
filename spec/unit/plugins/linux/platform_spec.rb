@@ -187,7 +187,7 @@ describe Ohai::System, "Linux plugin platform" do
       end
     end
 
-    %w{fedora arista_eos}.each do |p|
+    %w{fedora arista_eos bazzite}.each do |p|
       it "returns fedora for #{p} platform_family" do
         expect(plugin.platform_family_from_platform(p)).to eq("fedora")
       end

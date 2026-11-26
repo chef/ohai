@@ -59,11 +59,12 @@ Ohai.plugin(:Zpools) do
     pools.each_key do |pool|
       pools[pool][:devices] = Mash.new
 
-      # Run "zpool status" as non-root user (adm) so that
-      # the command won't try to open() each device which can
-      # hang the command if any of the disks are bad.
+      # Run "zpool status" as a non-root user so that the command won't
+      # try to open() each device, which can hang it if any of the disks
+      # are bad. As root that means switching to adm; any other user can't
+      # su without a password and is already unprivileged.
       if platform_family == "solaris2"
-        command = "su adm -c \"zpool status #{pool}\""
+        command = Process.euid == 0 ? "su adm -c \"zpool status #{pool}\"" : "zpool status #{pool}"
       else
         # -L is used to give us real device names not label or uuid
         # for example sda instead of ata-WDC_WD60EZAZ-00SF3B0_WD-WX32D203UXYK

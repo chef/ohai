@@ -203,7 +203,7 @@ module Ohai
         raise e
       rescue => e
         @failed = true
-        logger.trace("Plugin #{name} threw #{e.inspect}")
+        logger.warn("Plugin #{name} threw #{e.inspect}")
         e.backtrace.each { |line| logger.trace( line ) }
       end
 

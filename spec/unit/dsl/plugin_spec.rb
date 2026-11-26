@@ -30,6 +30,31 @@ shared_examples "Ohai::DSL::Plugin" do
     end
   end
 
+  describe "#safe_run" do
+    before do
+      allow(plugin).to receive(:name).and_return(:TestPlugin)
+      allow(plugin).to receive(:run).and_raise(NoMethodError, "undefined method 'detect' for nil")
+    end
+
+    it "logs the exception as a warning" do
+      expect(plugin.logger).to receive(:warn).with(/Plugin TestPlugin threw #<NoMethodError: undefined method 'detect' for nil>/)
+      allow(plugin.logger).to receive(:trace)
+      plugin.safe_run
+    end
+
+    it "logs the backtrace only at trace level" do
+      allow(plugin.logger).to receive(:warn)
+      expect(plugin.logger).to receive(:trace).at_least(:once)
+      plugin.safe_run
+    end
+
+    it "marks the plugin as failed without raising" do
+      allow(plugin.logger).to receive(:warn)
+      expect { plugin.safe_run }.not_to raise_error
+      expect(plugin.failed).to be true
+    end
+  end
+
   describe "#run" do
     before do
       allow(plugin).to receive(:run_plugin).and_return(true)

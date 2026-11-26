@@ -69,11 +69,16 @@ Ohai.plugin(:Virtualization) do
 
       if zones.length == 1
         first_zone = zones.keys[0]
-        virtualization[:system] = "zone"
         if first_zone == "global"
-          virtualization[:role] = "host"
+          # A global zone without other zones hosts nothing. On a VM, keep
+          # the hypervisor guest found above as the primary system.
+          unless virtualization[:role] == "guest"
+            virtualization[:system] = "zone"
+            virtualization[:role] = "host"
+          end
           virtualization[:systems][:zone] = "host"
         else
+          virtualization[:system] = "zone"
           virtualization[:role] = "guest"
           virtualization[:systems][:zone] = "guest"
           virtualization[:guest_uuid] = zones[first_zone]["uuid"]

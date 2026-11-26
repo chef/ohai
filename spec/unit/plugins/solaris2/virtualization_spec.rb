@@ -124,5 +124,37 @@ describe Ohai::System, "Solaris virtualization platform" do
       expect(plugin[:virtualization][:systems][:zone]).to eq("host")
       expect(plugin[:virtualization]).not_to have_key(:guests)
     end
+
+    it "keeps the KVM guest as the primary system" do
+      expect(plugin[:virtualization][:system]).to eq("kvm")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+    end
+  end
+
+  describe "with zones" do
+    let(:global_zone) { "0:global:running:/::solaris:shared:-:none::\n" }
+    let(:web_zone) { "1:web:running:/system/zones/web/root:4b4a3ee3-5d42-4f3e-9f2b-7b6a33f41c4a:solaris:excl:-:none:\n" }
+
+    before do
+      allow(File).to receive(:executable?).and_call_original
+      allow(File).to receive(:executable?).with("/usr/sbin/zoneadm").and_return(true)
+    end
+
+    it "reports a zone host on hardware with only the global zone" do
+      allow(plugin).to receive(:shell_out).with("zoneadm list -pc").and_return(mock_shell_out(0, global_zone, ""))
+      plugin[:dmi] = { system: { manufacturer: "Oracle Corporation", product: "SUN SERVER X4-2" } }
+      plugin.run
+      expect(plugin[:virtualization]).to include(system: "zone", role: "host")
+      expect(plugin[:virtualization][:systems]).to eq("zone" => "host")
+    end
+
+    it "reports a zone host on a VM whose global zone hosts other zones" do
+      allow(plugin).to receive(:shell_out).with("zoneadm list -pc").and_return(mock_shell_out(0, global_zone + web_zone, ""))
+      plugin[:dmi] = { system: { manufacturer: "QEMU", product: "Standard PC (Q35 + ICH9, 2009)" } }
+      plugin.run
+      expect(plugin[:virtualization]).to include(system: "zone", role: "host")
+      expect(plugin[:virtualization][:systems]).to eq("kvm" => "guest", "zone" => "host")
+      expect(plugin[:virtualization][:guests].keys).to eq(%w{global web})
+    end
   end
 end

@@ -22,7 +22,6 @@ Ohai.plugin(:Cloud) do
   depends "ec2"
   depends "gce"
   depends "rackspace"
-  depends "eucalyptus"
   depends "linode"
   depends "openstack"
   depends "azure"
@@ -230,27 +229,6 @@ Ohai.plugin(:Cloud) do
   end
 
   # ----------------------------------------
-  # eucalyptus
-  # ----------------------------------------
-
-  # Is current cloud eucalyptus?
-  #
-  # === Return
-  # true:: If eucalyptus Hash is defined
-  # false:: Otherwise
-  def on_eucalyptus?
-    eucalyptus != nil
-  end
-
-  def get_eucalyptus_values
-    @cloud_attr_obj.add_ipv4_addr(eucalyptus["public_ipv4"], :public)
-    @cloud_attr_obj.add_ipv4_addr(eucalyptus["local_ipv4"], :private)
-    @cloud_attr_obj.public_hostname = eucalyptus["public_hostname"]
-    @cloud_attr_obj.local_hostname = eucalyptus["local_hostname"]
-    @cloud_attr_obj.provider = "eucalyptus"
-  end
-
-  # ----------------------------------------
   # openstack
   # ----------------------------------------
 
@@ -402,7 +380,6 @@ Ohai.plugin(:Cloud) do
     collect_provider_values("ec2") { get_ec2_values } if on_ec2?
     collect_provider_values("rackspace") { get_rackspace_values } if on_rackspace?
     collect_provider_values("linode") { get_linode_values } if on_linode?
-    collect_provider_values("eucalyptus") { get_eucalyptus_values } if on_eucalyptus?
     collect_provider_values("openstack") { get_openstack_values } if on_openstack?
     collect_provider_values("azure") { get_azure_values } if on_azure?
     collect_provider_values("digital_ocean") { get_digital_ocean_values } if on_digital_ocean?

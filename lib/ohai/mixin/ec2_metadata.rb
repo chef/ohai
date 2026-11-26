@@ -103,7 +103,7 @@ module Ohai
           else
             # Versions are "1.0" or dated ("2021-07-15"), so a string sort
             # orders them. Ignore "latest" and anything else an EC2-compatible
-            # service (OpenStack, Eucalyptus) might list.
+            # service such as OpenStack might list.
             versions = response.body.split("\n").map(&:strip).grep(/\A(1\.0|\d{4}-\d{2}-\d{2})\z/).sort
             if versions.empty?
               raise "Mixin EC2: Unable to determine EC2 metadata version (no supported entries found)"

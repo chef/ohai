@@ -110,7 +110,7 @@ Ohai.plugin(:Virtualization) do
     end
 
     # parse dmi to discover various virtualization guests
-    guest = guest_from_dmi_data(get_attribute(:dmi, :system, :manufacturer), get_attribute(:dmi, :system, :product), get_attribute(:dmi, :system, :version))
+    guest = guest_from_dmi_data(get_attribute(:dmi, :system, :manufacturer), get_attribute(:dmi, :system, :product_name), get_attribute(:dmi, :system, :version))
     if guest
       logger.trace("Plugin Virtualization: DMI data indicates #{guest} guest")
       virtualization[:system] = guest

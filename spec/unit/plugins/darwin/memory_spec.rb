@@ -61,4 +61,42 @@ describe Ohai::System, "Darwin Memory Plugin" do
   it "sets memory[:free] to 10504MB" do
     expect(@plugin[:memory][:free]).to eq("10504MB")
   end
+
+  context "with memory held by the compressor" do
+    before do
+      vm_stat = <<~VM_STAT
+        Mach Virtual Memory Statistics: (page size of 16384 bytes)
+        Pages free:                                    38910.
+        Pages active:                                 202491.
+        Pages inactive:                               195750.
+        Pages speculative:                              6708.
+        Pages throttled:                                   0.
+        Pages wired down:                              69245.
+        Pages purgeable:                                4065.
+        "Translation faults":                        3125636.
+        Pages copy-on-write:                          162105.
+        Pages zero filled:                           1079424.
+        Pages reactivated:                             61041.
+        Pages purged:                                   4225.
+        File-backed pages:                            217973.
+        Anonymous pages:                              186976.
+        Pages stored in compressor:                    38162.
+        Pages occupied by compressor:                  10349.
+        Decompressions:                                 5818.
+        Compressions:                                  50106.
+        Pageins:                                      302923.
+        Pageouts:                                       1873.
+        Swapins:                                           0.
+        Swapouts:                                          0.
+      VM_STAT
+      allow(@plugin).to receive(:shell_out).with("sysctl -n hw.memsize").and_return(mock_shell_out(0, "8589934592\n", ""))
+      allow(@plugin).to receive(:shell_out).with("vm_stat").and_return(mock_shell_out(0, vm_stat, ""))
+      @plugin[:memory] = nil
+      @plugin.run
+    end
+
+    it "counts the compressor's pages as active, not free" do
+      expect(@plugin[:memory]).to eq("total" => "8192MB", "active" => "4405MB", "inactive" => "3058MB", "free" => "725MB")
+    end
+  end
 end

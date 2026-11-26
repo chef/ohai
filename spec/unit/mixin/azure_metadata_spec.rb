@@ -62,11 +62,46 @@ describe Ohai::Mixin::AzureMetadata do
       end
     end
 
+    context "when azure lists the versions it supports" do
+      # IMDS's answer on a Standard_B2s VM in westus2, November 2026
+      let(:response) { double("Net::HTTP Response", body: "{\"error\":\"Bad request. api-version is invalid or was not specified in the request. For more information refer to aka.ms/azureimds\",\"newest-versions\":[\"2026-07-20\",\"2026-06-23\",\"2025-11-15\"]}", code: "400") }
+
+      it "returns the newest of them" do
+        expect(mixin.best_api_version).to eq("2026-07-20")
+      end
+    end
+
+    context "when azure lists versions newer than any Ohai knows" do
+      let(:response) { double("Net::HTTP Response", body: "{\"error\":\"Bad request.\",\"newest-versions\":[\"2027-03-01\",\"2026-07-20\",\"2026-06-23\"]}", code: "400") }
+
+      it "returns the newest version azure supports" do
+        expect(mixin.best_api_version).to eq("2027-03-01")
+      end
+    end
+
+    context "when azure lists no versions" do
+      let(:response) { double("Net::HTTP Response", body: "{\"error\":\"Bad request.\"}", code: "400") }
+
+      it "returns the most recent version we know of" do
+        expect(mixin.best_api_version).to eq("2026-07-20")
+      end
+    end
+
+    context "when the service is throttling" do
+      let(:response) { double("Net::HTTP Response", body: "{\"newest-versions\":[\"2023-07-01\"]}", code: "400") }
+
+      it "retries" do
+        allow(mixin).to receive(:sleep)
+        allow(mixin).to receive(:http_get).and_return(double("Net::HTTP Response", body: "", code: "429"), response)
+        expect(mixin.best_api_version).to eq("2023-07-01")
+      end
+    end
+
     context "when the response code is 404" do
       let(:response) { double("Net::HTTP Response", code: "404") }
 
       it "returns the most recent version we know of" do
-        expect(mixin.best_api_version).to eq("2023-07-01")
+        expect(mixin.best_api_version).to eq("2026-07-20")
       end
     end
 
@@ -82,6 +117,12 @@ describe Ohai::Mixin::AzureMetadata do
   describe "#fetch_metadata" do
     before do
       allow(mixin).to receive(:best_api_version).and_return("2021-10-01")
+      allow(mixin).to receive(:sleep)
+    end
+
+    it "retries a transient error" do
+      allow(mixin).to receive(:http_get).and_return(double("http", code: "500"), double("http", code: "200", body: '{"compute":{}}'))
+      expect(mixin.fetch_metadata).to eq("compute" => {})
     end
 
     it "returns an empty hash given a non-200 response" do

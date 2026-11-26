@@ -60,6 +60,9 @@ describe Ohai::System, "plugin azure" do
     allow(plugin).to receive(:can_socket_connect?)
       .with(Ohai::Mixin::AzureMetadata::AZURE_METADATA_ADDR, 80)
       .and_return(false)
+    # agent paths and SMBIOS fields a test doesn't set are absent
+    Ohai::Mixin::AzureMetadata::WAAGENT_PATHS.each { |path| allow(plugin).to receive(:file_exist?).with(path).and_return(false) }
+    allow(plugin).to receive(:smbios_value).and_return(nil)
   end
 
   shared_examples_for "!azure" do
@@ -323,6 +326,81 @@ describe Ohai::System, "plugin azure" do
       expect(plugin[:azure][:metadata][:network][:public_ipv4]).to eq(["40.118.212.225"])
       expect(plugin[:azure][:metadata][:network][:local_ipv6]).to eq([])
       expect(plugin[:azure][:metadata][:network][:local_ipv4]).to eq(["10.0.1.6"])
+    end
+  end
+
+  describe "with the Azure chassis asset tag and no hint, agent or DHCP data" do
+    before do
+      allow(plugin).to receive(:hint?).with("azure").and_return(false)
+      allow(plugin).to receive(:dir_exist?).with("C:\\WindowsAzure").and_return(false)
+      allow(plugin).to receive(:file_exist?).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(false)
+      allow(plugin).to receive(:tcp_ip_dhcp_domain).and_return(nil)
+      allow(plugin).to receive(:smbios_value).with(:chassis_asset_tag).and_return("7783-7084-3265-9085-8269-3286-77")
+    end
+
+    it_behaves_like "azure"
+
+    it "keeps azure even when the metadata request fails" do
+      allow(plugin).to receive(:can_socket_connect?)
+        .with(Ohai::Mixin::AzureMetadata::AZURE_METADATA_ADDR, 80)
+        .and_return(true)
+      allow(plugin).to receive(:fetch_metadata).and_return(nil)
+      plugin.run
+      expect(plugin[:azure]).to have_key(:metadata)
+    end
+  end
+
+  %w{/usr/bin/waagent /usr/local/sbin/waagent /usr/share/oem/bin/waagent}.each do |path|
+    describe "without azure hint file but with the agent at #{path}" do
+      before do
+        allow(plugin).to receive(:hint?).with("azure").and_return(false)
+        allow(plugin).to receive(:file_exist?).with(path).and_return(true)
+        allow(plugin).to receive(:dir_exist?).with("C:\\WindowsAzure").and_return(false)
+      end
+
+      it_behaves_like "azure"
+    end
+  end
+
+  describe "with the agent and a metadata service that errors" do
+    before do
+      allow(plugin).to receive(:hint?).with("azure").and_return(false)
+      allow(plugin).to receive(:file_exist?).with("/usr/sbin/waagent").and_return(true)
+      allow(plugin).to receive(:dir_exist?).with("C:\\WindowsAzure").and_return(false)
+      allow(plugin).to receive(:can_socket_connect?)
+        .with(Ohai::Mixin::AzureMetadata::AZURE_METADATA_ADDR, 80)
+        .and_return(true)
+      allow(plugin).to receive(:fetch_metadata).and_raise(RuntimeError, "Unable to determine Azure metadata version (returned 429 response)")
+      allow(plugin).to receive(:http_get).and_raise(RuntimeError, "still throttled")
+    end
+
+    it "keeps the azure attribute without metadata" do
+      plugin.run
+      expect(plugin[:azure]).to have_key(:metadata)
+      expect(plugin[:azure][:metadata]).to be_nil
+    end
+  end
+
+  describe "with metadata whose network data is incomplete" do
+    before do
+      allow(plugin).to receive(:hint?).with("azure").and_return({})
+      allow(plugin).to receive(:can_socket_connect?)
+        .with(Ohai::Mixin::AzureMetadata::AZURE_METADATA_ADDR, 80)
+        .and_return(true)
+      allow(plugin).to receive(:fetch_metadata).and_return(
+        "compute" => { "location" => "westeurope" },
+        "network" => { "interface" => [
+          { "macAddress" => "000D3A37F080",
+            "ipv4" => { "ipAddress" => [{ "privateIpAddress" => "10.0.1.6", "publicIpAddress" => nil }] } },
+        ] }
+      )
+      plugin.run
+    end
+
+    it "parses the addresses that are present" do
+      expect(plugin[:azure][:metadata][:network][:local_ipv4]).to eq(["10.0.1.6"])
+      expect(plugin[:azure][:metadata][:network][:public_ipv4]).to eq([])
+      expect(plugin[:azure][:metadata][:network][:local_ipv6]).to eq([])
     end
   end
 end

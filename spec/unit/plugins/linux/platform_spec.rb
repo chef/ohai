@@ -293,6 +293,34 @@ describe Ohai::System, "Linux plugin platform" do
       end
     end
 
+    # Garden Linux 2150.17.0 (ghcr.io/gardenlinux/gardenlinux image, 2026-11)
+    context "when os-release has IMAGE_VERSION but no VERSION_ID" do
+      let(:os_data) do
+        <<~OS_DATA
+          ID=gardenlinux
+          ID_LIKE=debian
+          NAME="Garden Linux"
+          PRETTY_NAME="Garden Linux 2150.17.0"
+          IMAGE_VERSION=2150.17.0
+          VARIANT_ID=container-amd64
+          HOME_URL="https://gardenlinux.io"
+          SUPPORT_URL="https://github.com/gardenlinux/gardenlinux"
+          BUG_REPORT_URL="https://github.com/gardenlinux/gardenlinux/issues"
+          GARDENLINUX_VERSION=2150.17.0
+        OS_DATA
+      end
+
+      before do
+        expect(plugin).to receive(:file_read).with("/etc/os-release").and_return(os_data)
+      end
+
+      it "sets platform_version from IMAGE_VERSION" do
+        plugin.run
+        expect(plugin[:platform]).to eq("gardenlinux")
+        expect(plugin[:platform_version]).to eq("2150.17.0")
+      end
+    end
+
     context "when on centos where version data in os-release is wrong" do
       let(:os_data) do
         <<~OS_DATA

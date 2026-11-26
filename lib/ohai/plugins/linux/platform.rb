@@ -280,7 +280,8 @@ Ohai.plugin(:Platform) do
     end
   end
 
-  # Grab the version from the VERSION_ID field and use the kernel release if that's not
+  # Grab the version from the VERSION_ID field, then IMAGE_VERSION for image-based
+  # distros such as Garden Linux, and use the kernel release if neither is
   # available. It should be there for everything, but rolling releases like arch / gentoo
   # where we've traditionally used the kernel as the version
   # @return String the OS version
@@ -292,7 +293,7 @@ Ohai.plugin(:Platform) do
     elsif os_release_info["ID"] == "debian"
       os_release_info["VERSION_ID"] || file_read("/etc/debian_version").chomp
     else
-      os_release_info["VERSION_ID"] || shell_out("/bin/uname -r").stdout.strip
+      os_release_info["VERSION_ID"] || os_release_info["IMAGE_VERSION"] || shell_out("/bin/uname -r").stdout.strip
     end
   end
 

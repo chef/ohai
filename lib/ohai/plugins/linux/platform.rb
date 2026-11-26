@@ -19,12 +19,6 @@
 
 Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_family"
-  depends "lsb"
-
-  # @deprecated
-  def get_redhatish_platform(contents)
-    contents[/^Red Hat/i] ? "redhat" : contents[/(\w+)/i, 1].downcase
-  end
 
   # See https://rubular.com/r/78c1yXYa7zDhdV for example matches
   #
@@ -54,17 +48,20 @@ Ohai.plugin(:Platform) do
   end
 
   #
-  # Cached /etc/os-release info Hash. Also has logic for Cisco Nexus
+  # Cached os-release info Hash, from /etc/os-release or, as os-release(5)
+  # says, /usr/lib/os-release when it is missing. Also has logic for Cisco Nexus
   # switches that pulls the chained CISCO_RELEASE_INFO file into the Hash (other
   # distros can also reuse this method safely).
   #
-  # @returns [Hash] the canonical, cached Hash of /etc/os-release info or nil
+  # @returns [Hash] the canonical, cached Hash of os-release info; empty when
+  #   neither file exists
   #
   def os_release_info
     @os_release_info ||=
       begin
-        os_release_info = read_os_release_info("/etc/os-release")
-        cisco_release_info = os_release_info["CISCO_RELEASE_INFO"] if os_release_info
+        os_release_info = read_os_release_info("/etc/os-release") ||
+          read_os_release_info("/usr/lib/os-release") || {}
+        cisco_release_info = os_release_info["CISCO_RELEASE_INFO"]
         if cisco_release_info && file_exist?(cisco_release_info)
           os_release_info.merge!(read_os_release_info(cisco_release_info))
         end
@@ -79,21 +76,6 @@ Ohai.plugin(:Platform) do
   #
   def os_release_file_is_cisco?
     file_exist?("/etc/os-release") && os_release_info["CISCO_RELEASE_INFO"]
-  end
-
-  #
-  # Determines the platform version for F5 Big-IP systems
-  #
-  # @deprecated
-  #
-  # @returns [String] bigip Linux version from /etc/f5-release
-  #
-  def bigip_version
-    release_contents = file_read("/etc/f5-release")
-    release_contents.match(/BIG-IP release (\S*)/)[1] # http://rubular.com/r/O8nlrBVqSb
-  rescue NoMethodError, Errno::ENOENT, Errno::EACCES # rescue regex failure, file missing, or permission denied
-    logger.warn("Detected F5 Big-IP, but /etc/f5-release could not be parsed to determine platform_version")
-    nil
   end
 
   # our platform names don't match os-release. given a time machine they would but ohai
@@ -115,6 +97,7 @@ Ohai.plugin(:Platform) do
       "alinux" => "alibabalinux",
       "amzn" => "amazon",
       "archarm" => "arch",
+      "clear-linux-os" => "clearlinux",
       "cumulus-linux" => "cumulus",
       "ol" => "oracle",
       "opensuse-leap" => "opensuseleap",
@@ -137,7 +120,7 @@ Ohai.plugin(:Platform) do
     when /ubuntu/, /debian/, /linuxmint/, /raspbian/, /cumulus/, /kali/, /pop/
       # apt-get+dpkg almost certainly goes here
       "debian"
-    when /centos/, /redhat/, /oracle/, /almalinux/, /rocky/, /scientific/, /enterpriseenterprise/, /xenserver/, /xcp-ng/, /cloudlinux/, /alibabalinux/, /sangoma/, /clearos/, /parallels/, /ibm_powerkvm/, /nexus_centos/, /bigip/, /virtuozzo/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
+    when /centos/, /redhat/, /oracle/, /almalinux/, /rocky/, /scientific/, /xenserver/, /xcp-ng/, /cloudlinux/, /alibabalinux/, /sangoma/, /clearos/, /ibm_powerkvm/, /nexus_centos/, /virtuozzo/
       # NOTE: "rhel" should be reserved exclusively for recompiled rhel versions that are nearly perfectly compatible down to the platform_version.
       # The operating systems that are "rhel" should all be as compatible as rhel7 = centos7 = oracle7 = scientific7 (98%-ish core RPM version compatibility
       # and the version numbers MUST track the upstream). The appropriate EPEL version repo should work nearly perfectly.  Some variation like the
@@ -175,111 +158,6 @@ Ohai.plugin(:Platform) do
     end
   end
 
-  # modern linux distros include a /etc/os-release file, which we now rely on for
-  # OS detection. For older distros that do not include that file we fall back to
-  # our pre-Ohai 15 detection logic, which is the method below. No new functionality
-  # should be added to this logic.
-  #
-  # @deprecated
-  def legacy_platform_detection
-    # platform [ and platform_version ? ] should be lower case to avoid dealing with RedHat/Redhat/redhat matching
-    if file_exist?("/etc/oracle-release")
-      contents = file_read("/etc/oracle-release").chomp
-      platform "oracle"
-      platform_version get_redhatish_version(contents)
-    elsif file_exist?("/etc/enterprise-release")
-      contents = file_read("/etc/enterprise-release").chomp
-      platform "oracle"
-      platform_version get_redhatish_version(contents)
-    elsif file_exist?("/etc/f5-release")
-      platform "bigip"
-      platform_version bigip_version
-    elsif file_exist?("/etc/debian_version")
-      # Ubuntu and Debian both have /etc/debian_version
-      # Ubuntu should always have a working lsb, debian does not by default
-      if /Ubuntu/i.match?(lsb[:id])
-        platform "ubuntu"
-        platform_version lsb[:release]
-      else
-        platform "debian"
-        platform_version file_read("/etc/debian_version").chomp
-      end
-    elsif file_exist?("/etc/parallels-release")
-      contents = file_read("/etc/parallels-release").chomp
-      platform get_redhatish_platform(contents)
-      platform_version contents.match(/(\d\.\d\.\d)/)[0]
-    elsif file_exist?("/etc/Eos-release")
-      platform "arista_eos"
-      platform_version file_read("/etc/Eos-release").strip.split[-1]
-    elsif file_exist?("/etc/redhat-release")
-      contents = file_read("/etc/redhat-release").chomp
-      platform get_redhatish_platform(contents)
-      platform_version get_redhatish_version(contents)
-    elsif file_exist?("/etc/system-release")
-      contents = file_read("/etc/system-release").chomp
-      platform get_redhatish_platform(contents)
-      platform_version get_redhatish_version(contents)
-    elsif file_exist?("/etc/SuSE-release")
-      suse_release = file_read("/etc/SuSE-release")
-      suse_version = suse_release.scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")
-      suse_version = suse_release[/VERSION = ([\d\.]{2,})/, 1] if suse_version == ""
-      platform_version suse_version
-      if /^openSUSE/.match?(suse_release)
-        # opensuse releases >= 42 are openSUSE Leap
-        if platform_version.to_i < 42
-          platform "opensuse"
-        else
-          platform "opensuseleap"
-        end
-      else
-        platform "suse"
-      end
-    elsif os_release_file_is_cisco?
-      raise "unknown Cisco /etc/os-release or /etc/cisco-release ID_LIKE field" if
-        os_release_info["ID_LIKE"].nil? || !os_release_info["ID_LIKE"].include?("wrlinux")
-
-      case os_release_info["ID"]
-      when "nexus"
-        platform "nexus"
-      when "ios_xr"
-        platform "ios_xr"
-      else
-        raise "unknown Cisco /etc/os-release or /etc/cisco-release ID field"
-      end
-
-      platform_version os_release_info["VERSION"]
-    elsif file_exist?("/etc/slackware-version")
-      platform "slackware"
-      platform_version file_read("/etc/slackware-version").scan(/(\d+|\.+)/).join
-    elsif file_exist?("/etc/exherbo-release")
-      platform "exherbo"
-      # no way to determine platform_version in a rolling release distribution
-      # kernel release will be used - ex. 3.13
-      platform_version shell_out("/bin/uname -r").stdout.strip
-    elsif file_exist?("/usr/lib/os-release")
-      contents = file_read("/usr/lib/os-release")
-      if contents.include?("clear-linux-os") # Clear Linux https://clearlinux.org/
-        platform "clearlinux"
-        platform_version contents[/VERSION_ID=(\d+)/, 1]
-      end
-    elsif /RedHat/i.match?(lsb[:id])
-      platform "redhat"
-      platform_version lsb[:release]
-    elsif /Amazon/i.match?(lsb[:id])
-      platform "amazon"
-      platform_version lsb[:release]
-    elsif /ScientificSL/i.match?(lsb[:id])
-      platform "scientific"
-      platform_version lsb[:release]
-    elsif /XenServer/i.match?(lsb[:id])
-      platform "xenserver"
-      platform_version lsb[:release]
-    elsif lsb[:id] # LSB can provide odd data that changes between releases, so we currently fall back on it rather than dealing with its subtleties
-      platform lsb[:id].downcase
-      platform_version lsb[:release]
-    end
-  end
-
   # Grab the version from the VERSION_ID field and use the kernel release if that's not
   # available. It should be there for everything, but rolling releases like arch / gentoo
   # where we've traditionally used the kernel as the version
@@ -297,16 +175,13 @@ Ohai.plugin(:Platform) do
   end
 
   collect_data(:linux) do
-    if file_exist?("/etc/os-release")
-      logger.trace("Plugin platform: Using /etc/os-release for platform detection")
+    logger.trace("Plugin platform: Using os-release for platform detection")
 
-      # fixup os-release names to ohai platform names
-      platform platform_id_remap(os_release_info["ID"])
-
-      platform_version determine_os_version
-    else # we're on an old Linux distro
-      legacy_platform_detection
-    end
+    # fixup os-release names to ohai platform names. Without an os-release
+    # file or an ID in it (os-release(5) would default it to "linux"), report
+    # generic-linux.
+    platform platform_id_remap(os_release_info["ID"] || "generic-linux")
+    platform_version determine_os_version
 
     # unless we set it in a specific way with the platform logic above set based on platform data
     platform_family platform_family_from_platform(platform) if platform_family.nil?

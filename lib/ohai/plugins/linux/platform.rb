@@ -168,7 +168,7 @@ Ohai.plugin(:Platform) do
       "alpine"
     when /clearlinux/
       "clearlinux"
-    when /mangeia/
+    when /mageia/
       "mandriva"
     when /slackware/
       "slackware"

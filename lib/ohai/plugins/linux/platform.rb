@@ -234,20 +234,6 @@ Ohai.plugin(:Platform) do
       else
         platform "suse"
       end
-    elsif os_release_file_is_cisco?
-      raise "unknown Cisco /etc/os-release or /etc/cisco-release ID_LIKE field" if
-        os_release_info["ID_LIKE"].nil? || !os_release_info["ID_LIKE"].include?("wrlinux")
-
-      case os_release_info["ID"]
-      when "nexus"
-        platform "nexus"
-      when "ios_xr"
-        platform "ios_xr"
-      else
-        raise "unknown Cisco /etc/os-release or /etc/cisco-release ID field"
-      end
-
-      platform_version os_release_info["VERSION"]
     elsif file_exist?("/etc/slackware-version")
       platform "slackware"
       platform_version file_read("/etc/slackware-version").scan(/(\d+|\.+)/).join

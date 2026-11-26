@@ -80,6 +80,20 @@ Ohai.plugin(:Virtualization) do
       end
     end
 
+    # Without xenfs at /proc/xen, the kernel still reports Xen in
+    # /sys/hypervisor/type (PV, PVH and HVM, x86 and arm64), and the
+    # XENFEAT_dom0 feature bit (11, xen/include/public/features.h) marks the
+    # control domain
+    if !virtualization[:systems][:xen] && file_exist?("/sys/hypervisor/type") &&
+        file_read("/sys/hypervisor/type").strip == "xen"
+      features = file_exist?("/sys/hypervisor/properties/features") ? file_read("/sys/hypervisor/properties/features").strip.to_i(16) : 0
+      role = (features & (1 << 11)) == 0 ? "guest" : "host"
+      logger.trace("Plugin Virtualization: /sys/hypervisor/type is xen. Detecting as xen #{role}")
+      virtualization[:system] = "xen"
+      virtualization[:role] = role
+      virtualization[:systems][:xen] = role
+    end
+
     # Detect Virtualbox from kernel module
     if file_exist?("/proc/modules")
       modules = file_read("/proc/modules")

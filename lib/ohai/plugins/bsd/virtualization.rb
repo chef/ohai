@@ -29,49 +29,57 @@ Ohai.plugin(:Virtualization) do
     virtualization Mash.new unless virtualization
     virtualization[:systems] ||= Mash.new
 
-    # detect when in a jail or when a jail is actively running (not in stopped state)
-    so = shell_out("sysctl -n security.jail.jailed")
-    if so.stdout.strip.to_i == 1
-      virtualization[:system] = "jail"
-      virtualization[:role] = "guest"
-      virtualization[:systems][:jail] = "guest"
-      logger.trace("Plugin Virtualization: Guest running in FreeBSD jail detected")
-    end
+    os = collect_os.to_s
 
-    # run jls to get a list of running jails
-    # -n: name=value 1 line per jail format
-    # -d: list the dying jails as well as active jails
-    so = shell_out("jls -nd")
-    if (so.stdout || "").lines.count >= 1
-      virtualization[:system] = "jail"
-      virtualization[:role] = "host"
-      virtualization[:systems][:jail] = "host"
-      logger.trace("Plugin Virtualization: Host running FreeBSD jails detected")
-    end
-
-    # detect from modules
-    so = shell_out(Ohai.abs_path("/sbin/kldstat").to_s)
-    so.stdout.lines do |line|
-      case line
-      when /vboxdrv/
-        virtualization[:system] = "vbox"
-        virtualization[:role] = "host"
-        virtualization[:systems][:vbox] = "host"
-        logger.trace("Plugin Virtualization: Guest running on VirtualBox detected")
-      when /vboxguest/
-        virtualization[:system] = "vbox"
+    # jails and kldstat exist on FreeBSD and DragonFly only
+    if %w{freebsd dragonflybsd}.include?(os)
+      # detect when in a jail or when a jail is actively running (not in stopped state)
+      so = shell_out("sysctl -n security.jail.jailed")
+      if so.stdout.strip.to_i == 1
+        virtualization[:system] = "jail"
         virtualization[:role] = "guest"
-        virtualization[:systems][:vbox] = "guest"
-        logger.trace("Plugin Virtualization: Host running VirtualBox detected")
+        virtualization[:systems][:jail] = "guest"
+        logger.trace("Plugin Virtualization: Guest running in FreeBSD jail detected")
+      end
+
+      # run jls to get a list of running jails
+      # -n: name=value 1 line per jail format
+      # -d: list the dying jails as well as active jails
+      so = shell_out("jls -nd")
+      if (so.stdout || "").lines.count >= 1
+        virtualization[:system] = "jail"
+        virtualization[:role] = "host"
+        virtualization[:systems][:jail] = "host"
+        logger.trace("Plugin Virtualization: Host running FreeBSD jails detected")
+      end
+
+      # detect from modules
+      so = shell_out(Ohai.abs_path("/sbin/kldstat").to_s)
+      so.stdout.lines do |line|
+        case line
+        when /vboxdrv/
+          virtualization[:system] = "vbox"
+          virtualization[:role] = "host"
+          virtualization[:systems][:vbox] = "host"
+          logger.trace("Plugin Virtualization: Guest running on VirtualBox detected")
+        when /vboxguest/
+          virtualization[:system] = "vbox"
+          virtualization[:role] = "guest"
+          virtualization[:systems][:vbox] = "guest"
+          logger.trace("Plugin Virtualization: Host running VirtualBox detected")
+        end
       end
     end
 
-    # Detect bhyve by presence of /dev/vmm
-    if file_exist?("/dev/vmm")
-      virtualization[:system] = "bhyve"
-      virtualization[:role] = "host"
-      virtualization[:systems][:bhyve] = "host"
-      logger.trace("Plugin Virtualization: Host running bhyve detected")
+    # bhyve is FreeBSD's. OpenBSD creates /dev/vmm for vmm(4) on every
+    # amd64 install, so /dev/vmm means nothing there.
+    if os == "freebsd"
+      if file_exist?("/dev/vmm")
+        virtualization[:system] = "bhyve"
+        virtualization[:role] = "host"
+        virtualization[:systems][:bhyve] = "host"
+        logger.trace("Plugin Virtualization: Host running bhyve detected")
+      end
     end
 
     # Detect KVM/QEMU paravirt guests from cpu, report as KVM
@@ -84,29 +92,32 @@ Ohai.plugin(:Virtualization) do
       logger.trace("Plugin Virtualization: Guest running on KVM detected")
     end
 
-    # gather hypervisor of guests from sysctl kern.vm_guest
-    # there are a limited number of hypervisors detected here, BUT it doesn't
-    # require dmidecode to be installed and dmidecode isn't in freebsd out of the box
-    so = shell_out("sysctl -n kern.vm_guest")
-    hypervisor = case so.stdout
-                 when /vmware/
-                   "vmware"
-                 when /hv/
-                   "hyperv"
-                 when /xen/
-                   "xen"
-                 when /kvm/
-                   so = shell_out("sysctl -n kern.hostuuid")
-                   /^ec2/.match?(so.stdout) ? "amazonec2" : "kvm"
-                 when /bhyve/
-                   "bhyve"
-                 end
+    # kern.vm_guest is FreeBSD's
+    if os == "freebsd"
+      # gather hypervisor of guests from sysctl kern.vm_guest
+      # there are a limited number of hypervisors detected here, BUT it doesn't
+      # require dmidecode to be installed and dmidecode isn't in freebsd out of the box
+      so = shell_out("sysctl -n kern.vm_guest")
+      hypervisor = case so.stdout
+                   when /vmware/
+                     "vmware"
+                   when /hv/
+                     "hyperv"
+                   when /xen/
+                     "xen"
+                   when /kvm/
+                     so = shell_out("sysctl -n kern.hostuuid")
+                     /^ec2/.match?(so.stdout) ? "amazonec2" : "kvm"
+                   when /bhyve/
+                     "bhyve"
+                   end
 
-    if hypervisor
-      virtualization[:system] = hypervisor
-      virtualization[:role] = "guest"
-      virtualization[:systems][hypervisor.to_sym] = "guest"
-      logger.trace("Plugin Virtualization: Guest running on #{hypervisor} detected")
+      if hypervisor
+        virtualization[:system] = hypervisor
+        virtualization[:role] = "guest"
+        virtualization[:systems][hypervisor.to_sym] = "guest"
+        logger.trace("Plugin Virtualization: Guest running on #{hypervisor} detected")
+      end
     end
 
     # parse dmi to discover various virtualization guests

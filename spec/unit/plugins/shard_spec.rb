@@ -66,10 +66,58 @@ describe Ohai::System, "shard plugin" do
     expect(subject).to eq(117055036)
   end
 
-  it "logs and fails when dmidecode data is not available" do
-    plugin["dmi"] = {}
-    expect(Ohai::Log).to receive(:error).with(/Failed to get dmi/)
-    expect { subject }.to raise_error(RuntimeError)
+  context "when dmidecode data is not available" do
+    before do
+      plugin["dmi"] = {}
+      allow(plugin).to receive(:file_exist?).and_return(false)
+    end
+
+    it "fails without logging an error when sysfs has no DMI data either" do
+      expect(Ohai::Log).not_to receive(:error)
+      expect { subject }.to raise_error(RuntimeError, /Failed to generate shard_seed/)
+    end
+
+    context "and sysfs has it" do
+      # values in the format a Linux VM reports; dmidecode prints the same
+      # strings, so the seed doesn't change if dmidecode is installed later
+      before do
+        { "product_serial" => "#{serial}\n", "product_uuid" => "#{uuid}\n" }.each do |name, value|
+          allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/#{name}").and_return(true)
+          allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/#{name}").and_return(value)
+        end
+      end
+
+      it "provides the same shard as dmidecode data would" do
+        expect(subject).to eq(27767217)
+      end
+    end
+
+    context "and only the board serial is in sysfs" do
+      before do
+        allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/product_serial").and_return(true)
+        allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/product_serial").and_return("\n")
+        allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/board_serial").and_return(true)
+        allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/board_serial").and_return("#{serial}\n")
+        allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/product_uuid").and_return(true)
+        allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/product_uuid").and_return("#{uuid}\n")
+      end
+
+      it "uses it, as it would the base_board section of dmidecode data" do
+        expect(subject).to eq(27767217)
+      end
+    end
+
+    context "and the sysfs files are readable by root only" do
+      before do
+        allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/product_serial").and_return(true)
+        allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/product_serial").and_raise(Errno::EACCES)
+      end
+
+      it "fails without logging an error" do
+        expect(Ohai::Log).not_to receive(:error)
+        expect { subject }.to raise_error(RuntimeError, /Failed to generate shard_seed/)
+      end
+    end
   end
 
   it "logs and fails when no data sources were available" do

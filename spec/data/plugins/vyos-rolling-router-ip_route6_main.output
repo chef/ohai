@@ -1,0 +1,8 @@
+fe80::/64 dev lo proto kernel metric 256 pref medium
+fe80::/64 dev eth0 proto kernel metric 256 pref medium
+fe80::/64 dev dum0 proto kernel metric 256 pref medium
+fe80::/64 dev br0 proto kernel metric 256 pref medium
+fe80::/64 dev bond0 proto kernel metric 256 pref medium
+fe80::/64 dev bond0.200 proto kernel metric 256 pref medium
+fe80::/64 dev bond0.200.300 proto kernel metric 256 pref medium
+fe80::/64 dev bond0.100 proto kernel metric 256 pref medium

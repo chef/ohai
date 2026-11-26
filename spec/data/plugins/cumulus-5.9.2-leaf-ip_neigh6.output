@@ -1,0 +1,5 @@
+fe80::5054:ff:fe60:2 dev swp2 lladdr 52:54:00:60:00:02 router REACHABLE 
+fe80::2 dev eth0 lladdr 52:56:00:00:00:02 router STALE 
+fe80::5054:ff:fe60:1 dev swp1 lladdr 52:54:00:60:00:01 router REACHABLE 
+fe80::2 dev vlan10-v0 lladdr 52:56:00:00:00:02 router STALE 
+fe80::2 dev vlan10 lladdr 52:56:00:00:00:02 router REACHABLE 

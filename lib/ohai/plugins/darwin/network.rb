@@ -153,10 +153,14 @@ Ohai.plugin(:Network) do
         iface[cint][:addresses] ||= Mash.new
         iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $4, "scope" => scope_lookup($1) }
       end
-      if line =~ /^\s+media: ((\w+)|(\w+ [a-zA-Z0-9\-\<\>]+)) status: (\w+)/
+      # ifconfig prints media and status on separate lines
+      if line =~ /^\s+media: (.+?)(?: status: (\w+))?\s*$/
         iface[cint][:media] ||= Mash.new
         iface[cint][:media][:selected] = parse_media($1)
-        iface[cint][:status] = $4
+        iface[cint][:status] = $2 if $2
+      end
+      if line =~ /^\s+status: (\w+)/
+        iface[cint][:status] = $1
       end
       if line =~ /^\s+supported media: (.*)/
         iface[cint][:media] ||= Mash.new

@@ -497,15 +497,16 @@ Ohai.plugin(:Filesystem) do
     fs = Mash.new
     block_size = 0
     # on new versions of OSX, -i is default, on old versions it's not, so
-    # specifying it gets consistent output
+    # specifying it gets consistent output. -k reports 1024-byte blocks
+    # whatever BLOCKSIZE is set to.
     run_with_check("df") do
-      so = shell_out("df -i")
+      so = shell_out("df -k -i")
       so.stdout.each_line do |line|
         case line
         when /^Filesystem\s+(\d+)-/
           block_size = $1.to_i
           next
-        when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(\d+)\s+(\d+)\s+(\d+%)\s+(.+)$/
+        when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(\d+)\s+(\d+)\s+(\d+%|-)\s+(.+)$/
           key = "#{$1},#{$9}"
           fs[key] = Mash.new
           fs[key][:block_size] = block_size
@@ -517,7 +518,8 @@ Ohai.plugin(:Filesystem) do
           fs[key][:inodes_used] = $6
           fs[key][:inodes_available] = $7
           fs[key][:total_inodes] = ($6.to_i + $7.to_i).to_s
-          fs[key][:inodes_percent_used] = $8
+          # autofs maps print - for %iused
+          fs[key][:inodes_percent_used] = $8 unless $8 == "-"
           fs[key][:mount] = $9
         end
       end

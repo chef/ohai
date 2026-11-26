@@ -184,4 +184,50 @@ packages:
     end
 
   end
+
+  describe "token handling" do
+    let(:token_conn) { double("Net::HTTP token client", :read_timeout= => nil) }
+    let(:conn) { double("Net::HTTP client", :read_timeout= => nil, :keep_alive_timeout= => nil) }
+    let(:mixin) do
+      Object.new.extend(described_class).tap do |o|
+        o.define_singleton_method(:logger) { Ohai::Log }
+      end
+    end
+
+    before do
+      allow(Net::HTTP).to receive(:start).with("100.100.100.200", 80, nil, open_timeout: 3).and_return(token_conn, conn)
+    end
+
+    it "requests a token and sends it to the /latest/ tree" do
+      expect(token_conn).to receive(:put)
+        .with("/latest/api/token", "", { "X-aliyun-ecs-metadata-token-ttl-seconds" => "21600" })
+        .and_return(double("response", code: "200", body: "token123\n"))
+      expect(conn).to receive(:get)
+        .with("/latest/meta-data/hostname", hash_including("X-aliyun-ecs-metadata-token" => "token123"))
+        .and_return(double("response", code: "200", body: "host"))
+      expect(mixin.http_get("meta-data/hostname").body).to eq("host")
+    end
+
+    it "keeps the token-free versioned path when no token is issued" do
+      allow(token_conn).to receive(:put).and_return(double("response", code: "404", body: ""))
+      expect(conn).to receive(:get)
+        .with("/2016-01-01/meta-data/hostname", hash_excluding("X-aliyun-ecs-metadata-token"))
+        .and_return(double("response", code: "200", body: "host"))
+      mixin.http_get("meta-data/hostname")
+    end
+
+    it "keeps the token-free versioned path when the token request times out" do
+      allow(token_conn).to receive(:put).and_raise(Net::ReadTimeout)
+      expect(conn).to receive(:get).with("/2016-01-01/meta-data/hostname", anything)
+        .and_return(double("response", code: "200", body: "host"))
+      mixin.http_get("meta-data/hostname")
+    end
+
+    it "requests the token only once" do
+      allow(Net::HTTP).to receive(:start).and_return(token_conn, conn, conn)
+      expect(token_conn).to receive(:put).once.and_return(double("response", code: "200", body: "token123"))
+      allow(conn).to receive(:get).and_return(double("response", code: "200", body: "x"))
+      2.times { mixin.http_get("meta-data/hostname") }
+    end
+  end
 end

@@ -53,6 +53,8 @@ describe "metadata HTTP clients" do
   }.each do |mixin_module, (addr, method, *args)|
     it "#{mixin_module.name.split("::").last} connects to #{addr} without a proxy and with a connect timeout" do
       mixin = Object.new.extend(mixin_module)
+      # token requests are covered by each mixin's own spec
+      allow(mixin).to receive(:metadata_token).and_return(nil) if mixin.respond_to?(:metadata_token)
       expect(Net::HTTP).to receive(:start).with(addr, 80, nil, open_timeout: 3).and_return(conn)
       mixin.public_send(method, *args)
     end

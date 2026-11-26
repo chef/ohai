@@ -35,13 +35,50 @@ module Ohai
       ALI_METADATA_ADDR ||= "100.100.100.200"
 
       def http_get(uri)
+        token = metadata_token
         # Connect directly: the metadata service is link-local, so the nil proxy
         # address keeps Net::HTTP from using http_proxy from the environment,
         # and open_timeout replaces Net::HTTP's 60 second default.
         conn = Net::HTTP.start(ALI_METADATA_ADDR, 80, nil, open_timeout: 3)
         conn.read_timeout = 6
         conn.keep_alive_timeout = 6
-        conn.get("/2016-01-01/#{uri}", { "User-Agent" => "chef-ohai/#{Ohai::VERSION}" })
+        headers = { "User-Agent" => "chef-ohai/#{Ohai::VERSION}" }
+        if token
+          # Alibaba documents token access under /latest/; without a token,
+          # keep the versioned path Ohai has always used.
+          headers["X-aliyun-ecs-metadata-token"] = token
+          conn.get("/latest/#{uri}", headers)
+        else
+          conn.get("/2016-01-01/#{uri}", headers)
+        end
+      end
+
+      # A token for the metadata service. Instances in security hardening
+      # mode answer token-free requests with 403, so a token is requested
+      # first; if none is issued, requests go without one as before.
+      # https://www.alibabacloud.com/help/en/ecs/user-guide/view-instance-metadata
+      #
+      # @return [String, nil] the token, memoized for the run
+      def metadata_token
+        return @metadata_token if defined?(@metadata_token)
+
+        @metadata_token = fetch_metadata_token
+      end
+
+      # @return [String, nil]
+      def fetch_metadata_token
+        conn = Net::HTTP.start(ALI_METADATA_ADDR, 80, nil, open_timeout: 3)
+        conn.read_timeout = 2
+        # the token outlives the run; 21600 seconds is the documented maximum
+        response = conn.put("/latest/api/token", "", { "X-aliyun-ecs-metadata-token-ttl-seconds" => "21600" })
+        token = response.body.to_s.strip
+        return token if response.code == "200" && !token.empty?
+
+        logger.trace("Mixin AlibabaMetadata: token request returned #{response.code}; continuing without a token")
+        nil
+      rescue Timeout::Error, SystemCallError, IOError => e
+        logger.trace("Mixin AlibabaMetadata: token request failed (#{e.class}); continuing without a token")
+        nil
       end
 
       def fetch_metadata(id = "", is_directory = true)

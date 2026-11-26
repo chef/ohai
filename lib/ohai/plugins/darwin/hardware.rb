@@ -19,6 +19,7 @@
 
 Ohai.plugin(:Hardware) do
   provides "hardware"
+  depends "platform", "kernel"
 
   # Query several data types from one system_profiler process. Each run has
   # a fixed startup cost of a few hundred milliseconds, so one call for all
@@ -46,21 +47,16 @@ Ohai.plugin(:Hardware) do
     hw_items.delete("_name")
     hardware.merge!(hw_items)
 
-    # ProductName:	Mac OS X
-    # ProductVersion:	10.15.6
-    # BuildVersion:	19G46c
-    shell_out("sw_vers").stdout.lines.each do |line|
-      case line
-      when /^ProductName:\s*(.*)$/
-        hardware["operating_system"] = Regexp.last_match[1].strip
-      when /^ProductVersion:\s*(.*)$/
-        hardware["operating_system_version"] = Regexp.last_match[1].strip
-      when /^BuildVersion:\s*(.*)$/
-        hardware["build_version"] = Regexp.last_match[1].strip
-      end
+    # the platform plugin already ran sw_vers. Its ProductName is "macOS"
+    # from macOS 11 on and "Mac OS X" before.
+    if platform_version
+      hardware["operating_system"] = platform_version.to_i >= 11 ? "macOS" : "Mac OS X"
+      hardware["operating_system_version"] = platform_version
     end
+    hardware["build_version"] = platform_build if platform_build
 
-    hardware["architecture"] = shell_out("uname -m").stdout.strip
+    # the kernel plugin already read uname
+    hardware["architecture"] = kernel[:machine] if kernel
 
     # Storage queries
     storage = []

@@ -84,6 +84,12 @@ module Ohai
       # (Net::ReadTimeout and Net::OpenTimeout are Timeout::Errors)
       EC2_TRANSPORT_ERRORS ||= [Timeout::Error, SystemCallError, IOError, SocketError, Net::HTTPBadResponse].freeze
 
+      # Directories whose files hold temporary AWS credentials: the instance's
+      # own identity credentials and the IAM role's. Their names are listed,
+      # but their contents are only fetched for IAM roles with the iam hint.
+      EC2_IDENTITY_CREDENTIALS_DIR ||= "identity-credentials/ec2/security-credentials/"
+      EC2_IAM_CREDENTIALS_DIR ||= "iam/security-credentials/"
+
       #
       # The newest metadata version this instance supports
       # in AWS supported metadata versions are determined at instance start so we need to be
@@ -229,6 +235,22 @@ module Ohai
         end
       end
 
+      # Whether to fetch the IAM role's temporary credentials. The ec2 plugin
+      # does so only with the iam hint.
+      #
+      # @return [Boolean]
+      def fetch_iam_credentials?
+        false
+      end
+
+      # @param path [String] a metadata path relative to meta-data/
+      #
+      # @return [Boolean] whether the path holds credentials not to fetch
+      def credentials_path?(path)
+        path.start_with?(EC2_IDENTITY_CREDENTIALS_DIR) ||
+          (path.start_with?(EC2_IAM_CREDENTIALS_DIR) && !fetch_iam_credentials?)
+      end
+
       def fetch_metadata(id = "", api_version = nil)
         metadata = {}
         retrieved_metadata = metadata_get(id, best_api_version)
@@ -236,6 +258,8 @@ module Ohai
           retrieved_metadata.split("\n").each do |o|
             key = expand_path("#{id}#{o}")
             if key[-1..-1] != "/"
+              next if credentials_path?(key)
+
               metadata[metadata_key(key)] =
                 if EC2_ARRAY_VALUES.include? key
                   retr_meta = metadata_get(key, best_api_version)
@@ -284,6 +308,12 @@ module Ohai
           retrieved_metadata.split("\n").each do |o|
             key = expand_path(o)
             if key[-1..-1] != "/"
+              # keep the name (an IAM role's, for example) but not the credentials
+              if credentials_path?("#{id}#{key}")
+                metadata[metadata_key(key)] = nil
+                next
+              end
+
               retr_meta = metadata_get("#{id}#{key}", api_version)
               data = retr_meta || ""
               json = String(data)

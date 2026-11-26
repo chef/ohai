@@ -287,7 +287,7 @@ describe Ohai::System, "plugin ec2" do
         allow(plugin).to receive(:hint?).with("iam").and_return(false)
       end
 
-      it "parses ec2 iam/ directory and collect info and role_name and NOT collect iam/security-credentials/" do
+      it "parses ec2 iam/ directory and collect info and role_name, without fetching iam/security-credentials/" do
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/meta-data/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "iam/", code: "200"))
@@ -300,9 +300,8 @@ describe Ohai::System, "plugin ec2" do
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/meta-data/iam/security-credentials/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "MyRole", code: "200"))
-        expect(@http_client).to receive(:get)
-          .with("/2012-01-12/meta-data/iam/security-credentials/MyRole", @get_req_token_header)
-          .and_return(double("Net::HTTP Response", body: "{\n  \"Code\" : \"Success\",\n  \"LastUpdated\" : \"2012-08-22T07:47:22Z\",\n  \"Type\" : \"AWS-HMAC\",\n  \"AccessKeyId\" : \"AAAAAAAA\",\n  \"SecretAccessKey\" : \"SSSSSSSS\",\n  \"Token\" : \"12345678\",\n  \"Expiration\" : \"2012-08-22T11:25:52Z\"\n}", code: "200"))
+        expect(@http_client).not_to receive(:get)
+          .with("/2012-01-12/meta-data/iam/security-credentials/MyRole", anything)
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/user-data/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "By the pricking of my thumb...", code: "200"))
@@ -316,6 +315,38 @@ describe Ohai::System, "plugin ec2" do
         expect(plugin[:ec2]["iam"]["security-credentials"]).to be_nil
         expect(plugin[:ec2]["iam"]["role_name"]).to eql "MyRole"
       end
+    end
+
+    # the instance's own credentials, which AWS serves on every instance
+    # (identity-credentials/ec2/security-credentials/ec2-instance)
+    it "lists identity-credentials but doesn't fetch the instance's credentials" do
+      expect(@http_client).to receive(:get)
+        .with("/2012-01-12/meta-data/", @get_req_token_header)
+        .and_return(double("Net::HTTP Response", body: "identity-credentials/", code: "200"))
+      expect(@http_client).to receive(:get)
+        .with("/2012-01-12/meta-data/identity-credentials/", @get_req_token_header)
+        .and_return(double("Net::HTTP Response", body: "ec2/", code: "200"))
+      expect(@http_client).to receive(:get)
+        .with("/2012-01-12/meta-data/identity-credentials/ec2/", @get_req_token_header)
+        .and_return(double("Net::HTTP Response", body: "info\nsecurity-credentials/", code: "200"))
+      expect(@http_client).to receive(:get)
+        .with("/2012-01-12/meta-data/identity-credentials/ec2/info", @get_req_token_header)
+        .and_return(double("Net::HTTP Response", body: "{\n  \"Code\" : \"Success\",\n  \"AccountId\" : \"123456789012\"\n}", code: "200"))
+      expect(@http_client).to receive(:get)
+        .with("/2012-01-12/meta-data/identity-credentials/ec2/security-credentials/", @get_req_token_header)
+        .and_return(double("Net::HTTP Response", body: "ec2-instance", code: "200"))
+      expect(@http_client).not_to receive(:get)
+        .with("/2012-01-12/meta-data/identity-credentials/ec2/security-credentials/ec2-instance", anything)
+      expect(@http_client).to receive(:get)
+        .with("/2012-01-12/user-data/", @get_req_token_header)
+        .and_return(double("Net::HTTP Response", body: "", code: "404"))
+      expect(@http_client).to receive(:get)
+        .with("/2012-01-12/dynamic/instance-identity/document/", @get_req_token_header)
+        .and_return(double("Net::HTTP Response", body: "{\"accountId\":\"123456789012\"}", code: "200"))
+
+      plugin.run
+      expect(plugin[:ec2]["identity_credentials_ec2_info"]).to include("123456789012")
+      expect(plugin[:ec2].keys.grep(/security_credentials/)).to be_empty
     end
 
     it "ignores \"./\" and \"../\" on ec2 metadata paths to avoid infinity loops" do

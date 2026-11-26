@@ -125,6 +125,11 @@ Ohai.plugin(:EC2) do
     hint?("ec2") || has_ec2_xen_uuid? || has_ec2_amazon_dmi? || has_ec2_xen_dmi? || has_ec2_smbios? || has_ec2_identifying_number?
   end
 
+  # The IAM role's temporary credentials are fetched only with the iam hint
+  def fetch_iam_credentials?
+    !!hint?("iam")
+  end
+
   collect_data do
     begin
       require "base64" unless defined?(Base64)
@@ -137,7 +142,7 @@ Ohai.plugin(:EC2) do
       ec2 Mash.new
       begin
         (fetch_metadata || {}).each do |k, v|
-          # this includes sensitive data we don't want to store on the node
+          # the mixin no longer fetches this, but never store it on the node
           next if k == "identity_credentials_ec2_security_credentials_ec2_instance"
 
           # fetch_metadata returns IAM security credentials, including the IAM user's

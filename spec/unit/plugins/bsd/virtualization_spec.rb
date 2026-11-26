@@ -32,6 +32,19 @@ describe Ohai::System, "BSD virtualization plugin" do
     allow(File).to receive(:exist?).and_return false
   end
 
+  context "when DMI reports a VirtualBox guest" do
+    # dmidecode's System Information on VirtualBox; the dmi plugin stores
+    # "Product Name" as product_name
+    # https://github.com/chef/dmidecode_collection/blob/main/virtualbox_5
+    it "detects we are a vbox guest" do
+      plugin[:dmi] = Mash.new(system: { manufacturer: "innotek GmbH", product_name: "VirtualBox", version: "1.2" })
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("vbox")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:vbox]).to eq("guest")
+    end
+  end
+
   context "when on a bhyve host" do
     it "detects we are a host" do
       allow(File).to receive(:exist?).with("/dev/vmm").and_return true

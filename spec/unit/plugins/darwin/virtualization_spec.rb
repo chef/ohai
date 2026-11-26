@@ -85,6 +85,22 @@ describe Ohai::System, "Darwin virtualization platform" do
     plugin[:hardware][:machine_model] = "not_a_vm"
   end
 
+  describe "#docker_exists?" do
+    before { allow(plugin).to receive(:docker_exists?).and_call_original }
+
+    it "is false when only the docker CLI is installed" do
+      allow(plugin).to receive(:which).with("docker").and_return("/usr/local/bin/docker")
+      allow(plugin).to receive(:file_exist?).with("/var/run/docker.sock").and_return(false)
+      expect(plugin.docker_exists?).to be_falsey
+    end
+
+    it "is true when the docker daemon socket exists" do
+      allow(plugin).to receive(:which).with("docker").and_return("/usr/local/bin/docker")
+      allow(plugin).to receive(:file_exist?).with("/var/run/docker.sock").and_return(true)
+      expect(plugin.docker_exists?).to be_truthy
+    end
+  end
+
   describe "when detecting OS X virtualization" do
     it "does not set virtualization keys if no binaries are found" do
       plugin.run

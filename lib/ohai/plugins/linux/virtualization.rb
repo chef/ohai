@@ -28,12 +28,17 @@ Ohai.plugin(:Virtualization) do
     which("lxc-version") || which("lxc-start")
   end
 
+  # nova-compute runs on OpenStack compute hosts; the nova CLI is a client
   def nova_exists?
-    which("nova")
+    which("nova-compute")
   end
 
+  # the docker CLI alone is installed on clients and by podman's docker
+  # shim; a host runs the daemon, rootful or rootless
   def docker_exists?
-    which("docker")
+    which("docker") &&
+      (file_exist?("/var/run/docker.sock") || file_exist?("/run/docker.sock") ||
+       !dir_glob("/run/user/*/docker.sock").empty?)
   end
 
   def podman_exists?
@@ -96,9 +101,9 @@ Ohai.plugin(:Virtualization) do
       end
     end
 
-    # if nova binary is present we're on an openstack host
+    # if nova-compute is present we're on an openstack host
     if nova_exists?
-      logger.trace("Plugin Virtualization: nova command exists. Detecting as openstack host")
+      logger.trace("Plugin Virtualization: nova-compute command exists. Detecting as openstack host")
       virtualization[:system] = "openstack"
       virtualization[:role] = "host"
       virtualization[:systems][:openstack] = "host"

@@ -35,7 +35,6 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(plugin).to receive(:file_exist?).with("/proc/vz").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/proc/self/cgroup").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/.dockerenv").and_return(false)
-    allow(plugin).to receive(:file_exist?).with("/.dockerinit").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/sys/devices/virtual/misc/kvm").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/dev/lxd/sock").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/var/lib/lxd/devlxd").and_return(false)
@@ -43,7 +42,6 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(plugin).to receive(:file_exist?).with("/proc/1/environ").and_return(false)
 
     # default the which wrappers to nil
-    allow(plugin).to receive(:which).with("lxc-version").and_return(nil)
     allow(plugin).to receive(:which).with("lxc-start").and_return(nil)
     allow(plugin).to receive(:which).with("docker").and_return(nil)
     allow(plugin).to receive(:which).with("podman").and_return(nil)
@@ -448,14 +446,6 @@ describe Ohai::System, "Linux virtualization platform" do
         allow(plugin).to receive(:file_read).with("/proc/1/environ").and_return("")
       end
 
-      it "sets lxc host if lxc-version exists" do
-        allow(plugin).to receive(:which).with("lxc-start").and_return("/usr/bin/lxc-version")
-        plugin.run
-        expect(plugin[:virtualization][:system]).to eq("lxc")
-        expect(plugin[:virtualization][:role]).to eq("host")
-        expect(plugin[:virtualization][:systems][:lxc]).to eq("host")
-      end
-
       it "sets lxc host if lxc-start exists" do
         allow(plugin).to receive(:which).with("lxc-start").and_return("/usr/bin/lxc-start")
         plugin.run
@@ -465,7 +455,7 @@ describe Ohai::System, "Linux virtualization platform" do
       end
 
       it "does not set the old virtualization attributes if they are already set" do
-        allow(plugin).to receive(:which).with("lxc-version").and_return("/usr/bin/lxc-version")
+        allow(plugin).to receive(:which).with("lxc-start").and_return("/usr/bin/lxc-start")
         plugin[:virtualization] = Mash.new
         plugin[:virtualization][:system] = "the cloud"
         plugin[:virtualization][:role] = "cumulonimbus"
@@ -474,7 +464,7 @@ describe Ohai::System, "Linux virtualization platform" do
         expect(plugin[:virtualization][:role]).not_to eq("host")
       end
 
-      it "does not set lxc host if neither lxc-version nor lxc-start exists" do
+      it "does not set lxc host if lxc-start does not exist" do
         plugin.run
         expect(plugin[:virtualization][:system]).to be_nil
         expect(plugin[:virtualization][:role]).to be_nil
@@ -710,17 +700,8 @@ describe Ohai::System, "Linux virtualization platform" do
       expect(plugin[:virtualization][:systems][:docker]).to eq("guest")
     end
 
-    it "sets virtualization if /.dockerinit exists" do
-      allow(plugin).to receive(:file_exist?).with("/.dockerinit").and_return(true)
-      plugin.run
-      expect(plugin[:virtualization][:system]).to eq("docker")
-      expect(plugin[:virtualization][:role]).to eq("guest")
-      expect(plugin[:virtualization][:systems][:docker]).to eq("guest")
-    end
-
-    it "does not set virtualization if /.dockerenv or /.dockerinit does not exists" do
+    it "does not set virtualization if /.dockerenv does not exist" do
       allow(plugin).to receive(:file_exist?).with("/.dockerenv").and_return(false)
-      allow(plugin).to receive(:file_exist?).with("/.dockerinit").and_return(false)
       plugin.run
       expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end

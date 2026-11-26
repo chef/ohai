@@ -25,7 +25,7 @@ Ohai.plugin(:Virtualization) do
   include Ohai::Mixin::DmiDecode
 
   def lxc_version_exists?
-    which("lxc-version") || which("lxc-start")
+    which("lxc-start")
   end
 
   def nova_exists?
@@ -245,11 +245,11 @@ Ohai.plugin(:Virtualization) do
         virtualization[:role] = "guest"
         virtualization[:systems][:docker] = "guest"
       elsif lxc_version_exists? && file_read("/proc/self/cgroup") =~ %r{\d:[^:]+:/$}
-        # lxc-version shouldn't be installed by default
+        # lxc-start shouldn't be installed by default
         # Even so, it is likely we are on an LXC capable host that is not being used as such
         # So we're cautious here to not overwrite other existing values (OHAI-573)
         unless virtualization[:system] && virtualization[:role]
-          logger.trace("Plugin Virtualization: /proc/self/cgroup and lxc-version command exist. Detecting as lxc host")
+          logger.trace("Plugin Virtualization: /proc/self/cgroup and lxc-start command exist. Detecting as lxc host")
           virtualization[:system] = "lxc"
           virtualization[:role] = "host"
           virtualization[:systems][:lxc] = "host"
@@ -263,8 +263,8 @@ Ohai.plugin(:Virtualization) do
 
     # regardless of what we found above, if we're a docker container inside
     # of the above, lets report as a docker container
-    if file_exist?("/.dockerenv") || file_exist?("/.dockerinit")
-      logger.trace("Plugin Virtualization: .dockerenv or .dockerinit exist. Detecting as docker guest")
+    if file_exist?("/.dockerenv")
+      logger.trace("Plugin Virtualization: .dockerenv exists. Detecting as docker guest")
       virtualization[:system] = "docker"
       virtualization[:role] = "guest"
       virtualization[:systems][:docker] = "guest"

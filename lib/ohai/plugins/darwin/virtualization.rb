@@ -86,7 +86,9 @@ Ohai.plugin(:Virtualization) do
       virtualization[:role] = "guest"
     end
 
-    if ioreg_exists? && shell_out("ioreg -l").stdout.include?("pci1ab8,4000")
+    # the Parallels guest device is the IOPCIDevice pci1ab8,4000, so list only
+    # PCI devices instead of the whole I/O Registry
+    if ioreg_exists? && shell_out("ioreg -l -r -c IOPCIDevice -d 1").stdout.include?("pci1ab8,4000")
       virtualization[:system] = "parallels"
       virtualization[:role] = "guest"
       virtualization[:systems][:parallels] = "guest"

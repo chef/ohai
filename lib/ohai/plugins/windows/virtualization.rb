@@ -24,6 +24,16 @@ Ohai.plugin(:Virtualization) do
   require_relative "../../mixin/dmi_decode"
   include Ohai::Mixin::DmiDecode
 
+  # HypervisorPresent alone is also true on hardware running virtualization
+  # based security and on any guest. The Hyper-V Virtual Machine Management
+  # service (vmms) only exists once the Hyper-V role is installed, and
+  # HypervisorPresent shows that the hypervisor actually started.
+  def hyperv_host?(wmi)
+    return false unless wmi.first_of("Win32_ComputerSystem")&.[]("hypervisorpresent")
+
+    !wmi.query("SELECT Name FROM Win32_Service WHERE Name = 'vmms'").empty?
+  end
+
   collect_data(:windows) do
     require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 
@@ -40,6 +50,11 @@ Ohai.plugin(:Virtualization) do
       virtualization[:system] = guest
       virtualization[:role] = "guest"
       virtualization[:systems][guest.to_sym] = "guest"
+    elsif hyperv_host?(wmi)
+      logger.trace("Plugin Virtualization: the vmms service and a running hypervisor indicate a Hyper-V host")
+      virtualization[:system] = "hyperv"
+      virtualization[:role] = "host"
+      virtualization[:systems][:hyperv] = "host"
     end
   end
 end

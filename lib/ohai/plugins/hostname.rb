@@ -112,6 +112,15 @@ Ohai.plugin(:Hostname) do
     machinename from_cmd("hostname")
     fqdn resolve_fqdn
     domain collect_domain
+  rescue Ohai::Exceptions::Exec
+    # The hostname command isn't installed (Arch Linux doesn't install it by
+    # default). It prints the kernel's hostname, so read that instead, and
+    # cut it at the first dot as "hostname -s" does.
+    kernel_hostname = file_read("/proc/sys/kernel/hostname").strip
+    machinename kernel_hostname
+    hostname kernel_hostname.split(".", 2).first
+    fqdn canonicalize_hostname_with_retries(kernel_hostname)
+    domain collect_domain
   end
 
   collect_data(:solaris2) do

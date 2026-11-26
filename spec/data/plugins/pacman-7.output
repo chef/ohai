@@ -1,0 +1,70 @@
+Name            : acl
+Version         : 2.4.0-1
+Description     : Access control list utilities, libraries and headers
+Architecture    : x86_64
+URL             : https://savannah.nongnu.org/projects/acl
+Licenses        : LGPL-2.1-or-later AND GPL-2.0-or-later
+Groups          : None
+Provides        : libacl.so=1-64
+Depends On      : glibc
+Optional Deps   : None
+Required By     : coreutils  gettext  libarchive  sed  shadow  systemd  tar
+Optional For    : None
+Conflicts With  : None
+Replaces        : None
+Installed Size  : 345.21 KiB
+Packager        : Christian Hesse <eworm@archlinux.org>
+Build Date      : Mon 29 Jun 2026 01:16:29 PM UTC
+Install Date    : Sun 01 Nov 2026 12:03:50 PM UTC
+Install Reason  : Installed as a dependency for another package
+Install Script  : No
+Validated By    : Signature
+
+Name            : bash
+Version         : 5.3.20-1
+Description     : The GNU Bourne Again shell
+Architecture    : x86_64
+URL             : https://www.gnu.org/software/bash/bash.html
+Licenses        : GPL-3.0-or-later
+Groups          : None
+Provides        : sh
+Depends On      : readline  libreadline.so=8-64  glibc  ncurses
+Optional Deps   : bash-completion: for tab completion
+Required By     : audit  autoconf  automake  base  bison  bzip2  ca-certificates-utils  cloud-guest-utils  cloud-init  db5.3  device-mapper  dhclient  diffutils  e2fsprogs  elfutils  fakeroot  flex  gawk  gdb  gdbm  gettext  glib2  gnupg  grub  gzip  icu  iptables  keyutils  krb5  libassuan  libgpg-error  libksba  libmakepkg-dropins  libpcap  libtool  libxml2  mkinitcpio  npth  pacman  qemu-guest-agent  source-highlight  systemd  texinfo  which  xz
+Optional For    : mdadm  ncurses  openssh  pcre2  tzdata
+Conflicts With  : None
+Replaces        : None
+Installed Size  : 9.59 MiB
+Packager        : Tobias Powalowski <tpowa@archlinux.org>
+Build Date      : Tue 15 Sep 2026 07:47:19 PM UTC
+Install Date    : Sun 01 Nov 2026 12:03:50 PM UTC
+Install Reason  : Installed as a dependency for another package
+Install Script  : Yes
+Validated By    : Signature
+
+Name            : ruby
+Version         : 3.4.13-1
+Description     : An object-oriented language for quick and easy programming
+Architecture    : x86_64
+URL             : https://www.ruby-lang.org/en/
+Licenses        : BSD-2-Clause
+Groups          : None
+Provides        : libruby.so=3.4-64  ruby-benchmark  ruby-cgi  ruby-date  ruby-delegate  ruby-did_you_mean  ruby-digest  ruby-english  ruby-error_highlight  ruby-etc  ruby-fcntl  ruby-fiddle  ruby-fileutils  ruby-find  ruby-forwardable  ruby-io-console  ruby-io-nonblock  ruby-io-wait  ruby-ipaddr  ruby-json  ruby-logger  ruby-net-http  ruby-net-protocol  ruby-open-uri  ruby-open3  ruby-openssl  ruby-optparse  ruby-ostruct  ruby-pathname  ruby-prism  ruby-pp  ruby-prettyprint  ruby-pstore  ruby-psych  ruby-readline  ruby-reline  ruby-resolv  ruby-ruby2_keywords  ruby-securerandom  ruby-set  ruby-shellwords  ruby-singleton  ruby-stringio  ruby-strscan  ruby-syntax_suggest  ruby-tempfile  ruby-time  ruby-timeout  ruby-tmpdir  ruby-tsort  ruby-un  ruby-uri  ruby-weakref  ruby-yaml  ruby-zlib
+Depends On      : libgcc  gdbm  glibc  gmp  libffi  libxcrypt  libyaml  openssl  readline  zlib  rubygems
+Optional Deps   : tk: for Ruby/TK
+                  ruby-docs: Documentation for Ruby
+                  ruby-default-gems: Default gems which are part of Ruby StdLib
+                  ruby-bundled-gems: Bundled gems which are part of Ruby StdLib
+                  ruby-stdlib: Full Ruby StdLib including default gems, bundled gems and tools
+Required By     : ruby-bundler  rubygems
+Optional For    : None
+Conflicts With  : ruby-benchmark  ruby-cgi  ruby-date  ruby-delegate  ruby-did_you_mean  ruby-digest  ruby-english  ruby-etc  ruby-fcntl  ruby-fiddle  ruby-fileutils  ruby-find  ruby-forwardable  ruby-io-console  ruby-io-nonblock  ruby-io-wait  ruby-ipaddr  ruby-json  ruby-logger  ruby-net-http  ruby-open-uri  ruby-prism  ruby-psych  ruby-reline  ruby-ruby2_keywords  ruby-set  ruby-stringio  ruby-time  ruby-tmpdir  ruby-uri
+Replaces        : ruby-benchmark  ruby-cgi  ruby-date  ruby-delegate  ruby-did_you_mean  ruby-digest  ruby-english  ruby-etc  ruby-fcntl  ruby-fiddle  ruby-fileutils  ruby-find  ruby-forwardable  ruby-io-console  ruby-io-nonblock  ruby-io-wait  ruby-ipaddr  ruby-json  ruby-logger  ruby-net-http  ruby-open-uri  ruby-prism  ruby-psych  ruby-reline  ruby-ruby2_keywords  ruby-set  ruby-stringio  ruby-time  ruby-tmpdir  ruby-uri
+Installed Size  : 16.99 MiB
+Packager        : Bert Peters <bertptrs@archlinux.org>
+Build Date      : Fri 20 Nov 2026 04:10:37 PM UTC
+Install Date    : Mon 23 Nov 2026 09:22:56 PM UTC
+Install Reason  : Explicitly installed
+Install Script  : No
+Validated By    : Signature
+

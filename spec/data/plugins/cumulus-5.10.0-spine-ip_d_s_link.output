@@ -1,0 +1,38 @@
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00 promiscuity 0  allmulti 0 minmtu 0 maxmtu 0 addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535 tso_max_size 524280 tso_max_segs 65535 gro_max_size 65536 
+    RX:  bytes packets errors dropped  missed   mcast           
+        118253    1777      0       0       0       0 
+    TX:  bytes packets errors dropped carrier collsns           
+        118253    1777      0       0       0       0 
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast master mgmt state UP mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:60:00:00 brd ff:ff:ff:ff:ff:ff promiscuity 0  allmulti 0 minmtu 68 maxmtu 65535 
+    vrf_slave table 1001 addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535 tso_max_size 65536 tso_max_segs 65535 gro_max_size 65536 parentbus virtio parentdev virtio0 
+    RX:  bytes packets errors dropped  missed   mcast           
+      53867048   38038      0       0       0       0 
+    TX:  bytes packets errors dropped carrier collsns           
+        355202    2537      0       0       0       0 
+3: swp1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9216 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:60:00:01 brd ff:ff:ff:ff:ff:ff promiscuity 0  allmulti 0 minmtu 68 maxmtu 65535 addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535 tso_max_size 65536 tso_max_segs 65535 gro_max_size 65536 parentbus virtio parentdev virtio1 
+    RX:  bytes packets errors dropped  missed   mcast           
+         91112     887      0       1       0       0 
+    TX:  bytes packets errors dropped carrier collsns           
+         94468     925      0       0       0       0 
+4: swp2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9216 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:60:00:02 brd ff:ff:ff:ff:ff:ff promiscuity 0  allmulti 0 minmtu 68 maxmtu 65535 addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535 tso_max_size 65536 tso_max_segs 65535 gro_max_size 65536 parentbus virtio parentdev virtio2 
+    RX:  bytes packets errors dropped  missed   mcast           
+         86040     831      0       1       0       0 
+    TX:  bytes packets errors dropped carrier collsns           
+         74000     687      0       0       0       0 
+5: swp3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:60:00:03 brd ff:ff:ff:ff:ff:ff promiscuity 0  allmulti 0 minmtu 68 maxmtu 65535 addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535 tso_max_size 65536 tso_max_segs 65535 gro_max_size 65536 parentbus virtio parentdev virtio3 
+    RX:  bytes packets errors dropped  missed   mcast           
+          1314       3      0       0       0       0 
+    TX:  bytes packets errors dropped carrier collsns           
+          3355      20      0       0       0       0 
+6: mgmt: <NOARP,MASTER,UP,LOWER_UP> mtu 65575 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether b2:98:26:df:8e:76 brd ff:ff:ff:ff:ff:ff promiscuity 0  allmulti 0 minmtu 1280 maxmtu 65575 
+    vrf table 1001 addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535 tso_max_size 65536 tso_max_segs 65535 gro_max_size 65536 
+    RX:  bytes packets errors dropped  missed   mcast           
+      51982981    4373      0       0       0       0 
+    TX:  bytes packets errors dropped carrier collsns           
+            86       1      0       0       0       0 

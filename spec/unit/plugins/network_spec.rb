@@ -451,20 +451,18 @@ describe Ohai::System, "Network Plugin" do
 
           it_doesnt_fail
 
-          it "doesn't detect {ip,ip6,mac}address" do
-            allow(@plugin.logger).to receive(:warn)
+          it "picks {ip,ip6,mac}address as if there were no default interface" do
             @plugin.run
-            expect(@plugin["ipaddress"]).to be_nil
-            expect(@plugin["macaddress"]).to be_nil
-            expect(@plugin["ip6address"]).to be_nil
+            expect(@plugin["ipaddress"]).to eq("192.168.99.11")
+            expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
+            expect(@plugin["ip6address"]).to eq("3ffe:1111:3333::1")
           end
 
-          it "warns about this conflict" do
-            expect(@plugin.logger).to receive(:warn).with(/unable to detect ipaddress/).once
-            expect(@plugin.logger).to receive(:warn).with(/\[inet\] no ip address on eth0/).once
-            expect(@plugin.logger).to receive(:trace).with(/unable to detect ip6address/).once
-            expect(@plugin.logger).to receive(:trace).with(/unable to detect macaddress/).twice # for each family
-            expect(@plugin.logger).to receive(:warn).with(/\[inet6\] no ip address on eth0/).once
+          it "logs that it fell back to the first ipaddress" do
+            expect(@plugin.logger).not_to receive(:warn)
+            expect(@plugin.logger).to receive(:trace).with(/\[inet\] no ip address on eth0, picking the first ipaddress/).once
+            expect(@plugin.logger).to receive(:trace).with(/\[inet6\] no ip address on eth0, picking the first ipaddress/).once
+            allow(@plugin.logger).to receive(:trace)
             @plugin.run
           end
         end

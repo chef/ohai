@@ -1,0 +1,4 @@
+10.0.2.3 dev eth0 lladdr 52:55:0a:00:02:03 STALE 
+169.254.0.1 dev swp2 lladdr 52:54:00:60:00:02 PERMANENT proto zebra 
+10.0.2.2 dev eth0 lladdr 52:55:0a:00:02:02 DELAY 
+169.254.0.1 dev swp1 lladdr 52:54:00:60:00:01 PERMANENT proto zebra 

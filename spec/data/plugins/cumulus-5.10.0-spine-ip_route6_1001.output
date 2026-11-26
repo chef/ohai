@@ -1,0 +1,10 @@
+local ::1 dev mgmt proto kernel metric 0 pref medium
+::1 dev mgmt proto kernel metric 256 pref medium
+anycast fe80:: dev eth0 proto kernel metric 0 pref medium
+local fe80::5054:ff:fe60:0 dev eth0 proto kernel metric 0 pref medium
+fe80::/64 dev eth0 proto kernel metric 256 pref medium
+anycast fec0:: dev eth0 proto kernel metric 0 pref medium
+local fec0::5054:ff:fe60:0 dev eth0 proto kernel metric 0 pref medium
+fec0::/64 dev eth0 proto kernel metric 256 expires 85207sec pref medium
+ff00::/8 dev eth0 proto kernel metric 256 pref medium
+unreachable default dev lo metric 4278198272 pref medium

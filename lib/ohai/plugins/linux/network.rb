@@ -39,6 +39,11 @@ Ohai.plugin(:Network) do
     file_exist? "/proc/net/if_inet6"
   end
 
+  # @return [Hash] VRF device name => routing table id, filled in by link_statistics
+  def vrf_tables
+    @vrf_tables ||= {}
+  end
+
   def ethtool_binary_path
     @ethtool ||= which("ethtool")
   end
@@ -57,7 +62,7 @@ Ohai.plugin(:Network) do
       if line =~ /^([a-f0-9\:\.]+)\s+dev\s+([^\s]+)\s+lladdr\s+([a-fA-F0-9\:]+)/
         interface = iface[$2]
         unless interface
-          logger.warn("neighbor list has entries for unknown interface #{interface}")
+          logger.warn("Plugin Network: neighbor list has entries for unknown interface #{$2}")
           next
         end
         interface[neigh_attr] ||= Mash.new
@@ -90,6 +95,48 @@ Ohai.plugin(:Network) do
     nil
   end
 
+  # Routing daemons such as FRR install routes through kernel nexthop objects
+  # (Linux 5.3+). Those routes print as "default nhid 40 proto bgp metric 20"
+  # with the gateway and device kept in the nexthop object:
+  #
+  #   id 40 group 41/42 proto zebra
+  #   id 41 via fe80::5054:ff:fe60:1 dev swp1 scope link proto zebra
+  #
+  # @return [Hash] nexthop id => Array of "via X dev Y" strings, with groups
+  #   expanded into their members
+  def nexthop_objects
+    @nexthop_objects ||= begin
+      objects = {}
+      shell_out("ip -o nexthop show").stdout.each_line do |line|
+        objects[$1] = $2 if line =~ /^id\s+(\d+)\s+(.*)$/
+      end
+
+      objects.transform_values do |nexthop|
+        members = nexthop =~ %r{\bgroup\s+([\d,/]+)} ? $1.split("/").map { |m| m.split(",").first } : [nil]
+        members.filter_map do |id|
+          member = id ? objects[id] : nexthop
+          next if member.nil? || member !~ /\bdev\s+\S+/
+
+          member[/\b(?:via\s+(?:inet6\s+)?\S+\s+)?dev\s+\S+/]
+        end
+      end
+    end
+  end
+
+  # @param route_ending [String] a route without its destination, e.g.
+  #   "nhid 40 proto bgp metric 20"
+  # @return [Array<String>] the route once per nexthop of its nexthop object,
+  #   or the route unchanged if it names its device itself
+  def resolve_nexthop_id(route_ending)
+    return [route_ending] if route_ending.match?(/\bdev\s/)
+
+    nhid = route_ending[/\bnhid\s+(\d+)/, 1]
+    hops = nhid && nexthop_objects[nhid]
+    return [route_ending] if hops.nil? || hops.empty?
+
+    hops.map { |hop| "#{route_ending} #{hop}" }
+  end
+
   # checking the routing tables
   # why ?
   # 1) to set the default gateway and default interfaces attributes
@@ -97,7 +144,11 @@ Ohai.plugin(:Network) do
   #    the routing table source field.
   # 3) and since we're at it, let's populate some :routes attributes
   # (going to do that for both inet and inet6 addresses)
-  def check_routing_table(family, iface, default_route_table)
+  #
+  # When vrf is given, only the table's default routes are recorded, each
+  # marked with the VRF's name. A VRF's table also holds its local, broadcast
+  # and anycast routes, and an "unreachable default" with a very high metric.
+  def check_routing_table(family, iface, default_route_table, vrf: nil)
     so = shell_out("ip -o -f #{family[:name]} route show table #{default_route_table}")
     so.stdout.lines do |line|
       line.strip!
@@ -125,9 +176,13 @@ Ohai.plugin(:Network) do
       else
         next
       end
+      next if vrf && route_dest != "default"
+
+      route_endings = route_endings.flat_map { |route_ending| resolve_nexthop_id(route_ending) }
       route_endings.each do |route_ending|
         route_entry = Mash.new(destination: route_dest,
           family: family[:name])
+        route_entry[:vrf] = vrf if vrf
         route_int = nil
         if route_ending =~ /\bdev\s+([^\s]+)\b/
           route_int = $1
@@ -405,6 +460,14 @@ Ohai.plugin(:Network) do
         tmp_int = $2
         iface[tmp_int] ||= Mash.new
         net_counters[tmp_int] ||= Mash.new
+
+        # Only the interface's first line carries its link state. With -d, bond
+        # and bridge ports also print "bond_slave state ACTIVE" or
+        # "bridge_slave state forwarding", which are not link states.
+        # https://rubular.com/r/JRp6lNANmpcLV5
+        if line =~ /\sstate (\w+)/
+          iface[tmp_int]["state"] = $1.downcase
+        end
       end
 
       if /^\s+(ip6tnl|ipip)/.match?(line)
@@ -454,6 +517,11 @@ Ohai.plugin(:Network) do
         net_counters[tmp_int][:tx][:queuelen] = $1
       end
 
+      # a VRF device's detail line; its members print "vrf_slave table N"
+      if line =~ /^\s+vrf table (\d+)/
+        vrf_tables[tmp_int] = $1
+      end
+
       if line =~ /vlan id (\d+)/ || line =~ /vlan protocol ([\w\.]+) id (\d+)/
         if $2
           tmp_prot = $1
@@ -469,11 +537,6 @@ Ohai.plugin(:Network) do
         if vlan_flags.length > 0
           iface[tmp_int][:vlan][:flags] = vlan_flags.flatten.uniq
         end
-      end
-
-      # https://rubular.com/r/JRp6lNANmpcLV5
-      if line =~ /\sstate (\w+)/
-        iface[tmp_int]["state"] = $1.downcase
       end
 
       if line.include?("xdp")
@@ -717,17 +780,20 @@ Ohai.plugin(:Network) do
     counters[:network] ||= Mash.new
 
     # ohai.plugin[:network][:default_route_table] = 'default'
-    if configuration(:default_route_table).nil? || configuration(:default_route_table).empty?
-      default_route_table = "main"
-    else
+    default_route_table_configured = !(configuration(:default_route_table).nil? || configuration(:default_route_table).empty?)
+    if default_route_table_configured
       default_route_table = configuration(:default_route_table)
+    else
+      default_route_table = "main"
     end
     logger.trace("Plugin Network: default route table is '#{default_route_table}'")
 
     # Match the lead line for an interface from iproute2
     # 3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
-    # The '@eth0:' portion doesn't exist on primary interfaces and thus is optional in the regex
-    IPROUTE_INT_REGEX ||= /^(\d+): ([0-9a-zA-Z@:;\.\-_]*?)(@[0-9a-zA-Z\-_]+|):\s/
+    # 15: swp1.100.200@swp1.100: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9216 qdisc noqueue state UP
+    # The '@eth0:' portion doesn't exist on primary interfaces and thus is optional in the regex.
+    # The parent can itself be a VLAN subinterface, so it may contain dots.
+    IPROUTE_INT_REGEX ||= /^(\d+): ([0-9a-zA-Z@:;\.\-_]*?)(@[0-9a-zA-Z\.\-_]+|):\s/
 
     if which("ip")
       # families to get default routes from
@@ -762,6 +828,17 @@ Ohai.plugin(:Network) do
         routes = parse_routes(family, iface)
 
         default_route = choose_default_route(routes)
+
+        # Cumulus Linux puts eth0 in a management VRF named "mgmt" by default.
+        # Without a data-plane default route, the main table then has no
+        # default route, and the one the host uses for management traffic is
+        # in the VRF's table.
+        if default_route.nil? && !default_route_table_configured && vrf_tables["mgmt"]
+          logger.trace("Plugin Network: no #{family[:name]} default route in the main table, checking the mgmt VRF (table #{vrf_tables["mgmt"]})")
+          iface = check_routing_table(family, iface, vrf_tables["mgmt"], vrf: "mgmt")
+          routes = parse_routes(family, iface)
+          default_route = choose_default_route(routes)
+        end
 
         if default_route.nil? || default_route.empty?
           attribute_name = if family[:name] == "inet"

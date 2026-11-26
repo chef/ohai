@@ -1,0 +1,2 @@
+10.1.20.0/24 nhid 24 proto bgp metric 20 
+10.10.10.1 nhid 24 proto bgp metric 20 

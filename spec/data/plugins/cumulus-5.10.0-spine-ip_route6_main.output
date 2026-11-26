@@ -1,0 +1,2 @@
+fe80::/64 dev swp1 proto kernel metric 256 pref medium
+fe80::/64 dev swp2 proto kernel metric 256 pref medium

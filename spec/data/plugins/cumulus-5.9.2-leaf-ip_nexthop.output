@@ -1,0 +1,13 @@
+id 19 dev lo scope host proto zebra 
+id 20 dev eth0 scope host proto zebra 
+id 22 dev vlan10 scope host proto zebra 
+id 23 dev vlan20 scope host proto zebra 
+id 24 dev eth0 scope link proto zebra 
+id 30 dev swp1 scope link proto zebra 
+id 32 dev vlan10 scope link proto zebra 
+id 34 via 10.0.2.2 dev eth0 scope link proto zebra 
+id 35 blackhole proto zebra 
+id 36 blackhole proto zebra 
+id 40 group 41/42 proto zebra 
+id 41 via fe80::5054:ff:fe60:1 dev swp1 scope link proto zebra 
+id 42 via fe80::5054:ff:fe60:2 dev swp2 scope link proto zebra 

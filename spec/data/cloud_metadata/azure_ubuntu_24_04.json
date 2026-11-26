@@ -1,0 +1,26 @@
+[
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/metadata/instance",
+    "status": "400",
+    "content_type": "application/json; charset=utf-8",
+    "body": "{\"error\":\"Bad request. api-version is invalid or was not specified in the request. For more information refer to aka.ms/azureimds\",\"newest-versions\":[\"2026-07-20\",\"2026-06-23\",\"2025-11-15\"]}"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/metadata/instance?api-version=2026-07-20",
+    "status": "200",
+    "content_type": "application/json; charset=utf-8",
+    "body": "{\"compute\":{\"additionalCapabilities\":{\"hibernationEnabled\":\"false\"},\"azEnvironment\":\"AzurePublicCloud\",\"customData\":\"\",\"evictionPolicy\":\"\",\"extendedLocation\":{\"name\":\"\",\"type\":\"\"},\"host\":{\"id\":\"\"},\"hostGroup\":{\"id\":\"\"},\"interconnectGroupId\":\"\",\"interconnectSubgroupId\":\"\",\"isHostCompatibilityLayerVm\":\"false\",\"isVmInStandbyPool\":\"\",\"licenseType\":\"\",\"location\":\"westus2\",\"name\":\"ohai-audit-az\",\"offer\":\"ubuntu-24_04-lts\",\"osProfile\":{\"adminUsername\":\"ohai\",\"computerName\":\"ohai-audit-az\",\"disablePasswordAuthentication\":\"true\"},\"osType\":\"Linux\",\"physicalZone\":\"\",\"placementGroupId\":\"\",\"plan\":{\"name\":\"\",\"product\":\"\",\"publisher\":\"\"},\"platformFaultDomain\":\"0\",\"platformSubFaultDomain\":\"\",\"platformUpdateDomain\":\"0\",\"priority\":\"\",\"provider\":\"Microsoft.Compute\",\"publicKeys\":[{\"keyData\":\"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOhaiFixtureKey fixture@example.com\\n\",\"path\":\"/home/ohai/.ssh/authorized_keys\"}],\"publisher\":\"Canonical\",\"resourceGroupName\":\"ohai-audit-rg\",\"resourceId\":\"/subscriptions/0eaf0001-0000-4000-8000-0000feed0001/resourceGroups/ohai-audit-rg/providers/Microsoft.Compute/virtualMachines/ohai-audit-az\",\"securityProfile\":{\"encryptionAtHost\":\"false\",\"secureBootEnabled\":\"false\",\"securityType\":\"\",\"virtualTpmEnabled\":\"false\"},\"signatureInfo\":\"\",\"sku\":\"server\",\"storageProfile\":{\"dataDisks\":[],\"diskControllerType\":\"SCSI\",\"imageReference\":{\"communityGalleryImageId\":\"\",\"exactVersion\":\"24.04.202611170\",\"id\":\"\",\"offer\":\"ubuntu-24_04-lts\",\"publisher\":\"Canonical\",\"sharedGalleryImageId\":\"\",\"sku\":\"server\",\"version\":\"latest\"},\"osDisk\":{\"caching\":\"ReadWrite\",\"createOption\":\"FromImage\",\"diffDiskSettings\":{\"enableFullCaching\":\"\",\"option\":\"\",\"placement\":\"\"},\"diskSizeGB\":\"30\",\"encryptionSettings\":{\"diskEncryptionKey\":{\"secretUrl\":\"\",\"sourceVault\":{\"id\":\"\"}},\"enabled\":\"false\",\"keyEncryptionKey\":{\"keyUrl\":\"\",\"sourceVault\":{\"id\":\"\"}}},\"image\":{\"uri\":\"\"},\"managedDisk\":{\"id\":\"/subscriptions/0eaf0001-0000-4000-8000-0000feed0001/resourceGroups/ohai-audit-rg/providers/Microsoft.Compute/disks/ohai-audit-az_disk1_61431773a7544914b619088e37cdd2d8\",\"storageAccountType\":\"Premium_LRS\"},\"name\":\"ohai-audit-az_disk1_61431773a7544914b619088e37cdd2d8\",\"osType\":\"Linux\",\"vhd\":{\"uri\":\"\"},\"writeAcceleratorEnabled\":\"false\"},\"resourceDisk\":{\"size\":\"38912\"}},\"subscriptionId\":\"0eaf0001-0000-4000-8000-0000feed0001\",\"systemFaultDomain\":\"\",\"tags\":\"\",\"tagsList\":[],\"userData\":\"\",\"version\":\"24.04.202611170\",\"virtualMachineScaleSet\":{\"id\":\"\"},\"vmId\":\"0eaf0002-0000-4000-8000-0000feed0002\",\"vmScaleSetName\":\"\",\"vmSize\":\"Standard_B2s\",\"zone\":\"\"},\"network\":{\"interface\":[{\"interfaceCompartmentId\":\"\",\"ipv4\":{\"ipAddress\":[{\"privateIpAddress\":\"10.0.0.4\",\"publicIpAddress\":\"\"}],\"ipAddressBlock\":[],\"subnet\":[{\"address\":\"10.0.0.0\",\"prefix\":\"24\"}]},\"ipv6\":{\"ipAddress\":[],\"ipAddressBlock\":[]},\"macAddress\":\"02005E000011\"}]}}"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/metadata/loadbalancer?api-version=2026-07-20",
+    "status": "200",
+    "content_type": "application/json; charset=utf-8",
+    "body": "{\"loadbalancer\":{\"publicIpAddresses\":[{\"frontendIpAddress\":\"203.0.113.11\",\"privateIpAddress\":\"10.0.0.4\"}],\"inboundRules\":[],\"outboundRules\":[]}}"
+  }
+]

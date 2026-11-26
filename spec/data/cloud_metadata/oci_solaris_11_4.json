@@ -1,0 +1,26 @@
+[
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/opc/v2/instance",
+    "status": "200",
+    "content_type": "application/json",
+    "body": "{\n  \"agentConfig\": {\n    \"allPluginsDisabled\": false,\n    \"managementDisabled\": false,\n    \"monitoringDisabled\": false\n  },\n  \"availabilityDomain\": \"Uocm:US-SANJOSE-1-AD-1\",\n  \"canonicalRegionName\": \"us-sanjose-1\",\n  \"compartmentId\": \"ocid1.tenancy.oc1..aaaaaaaaohaifixture0001\",\n  \"definedTags\": {\n    \"Oracle-Tags\": {\n      \"CreatedBy\": \"default/user@example.com\",\n      \"CreatedOn\": \"2026-11-23T22:51:45.851Z\"\n    }\n  },\n  \"displayName\": \"ohai-audit-solaris\",\n  \"faultDomain\": \"FAULT-DOMAIN-2\",\n  \"hostname\": \"ohai-audit-solaris\",\n  \"id\": \"ocid1.instance.oc1.us-sanjose-1.aaaaaaaaohaifixture0002\",\n  \"image\": \"ocid1.image.oc1..aaaaaaaaohaifixture0003\",\n  \"metadata\": {\n    \"ssh_authorized_keys\": \"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOhaiFixtureKey fixture@example.com\\n\"\n  },\n  \"ociAdName\": \"us-sanjose-1-ad-1\",\n  \"region\": \"us-sanjose-1\",\n  \"regionInfo\": {\n    \"realmDomainComponent\": \"oraclecloud.com\",\n    \"realmKey\": \"oc1\",\n    \"regionIdentifier\": \"us-sanjose-1\",\n    \"regionKey\": \"SJC\"\n  },\n  \"shape\": \"VM.Standard.E5.Flex\",\n  \"shapeConfig\": {\n    \"maxVnicAttachments\": 2,\n    \"memoryInGBs\": 8.0,\n    \"networkingBandwidthInGbps\": 1.0,\n    \"ocpus\": 1.0\n  },\n  \"state\": \"Running\",\n  \"tenantId\": \"ocid1.tenancy.oc1..aaaaaaaaohaifixture0001\",\n  \"timeCreated\": 1795474306913\n}"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/opc/v2/vnics",
+    "status": "200",
+    "content_type": "application/json",
+    "body": "[\n  {\n    \"macAddr\": \"02:00:5E:00:00:01\",\n    \"privateIp\": \"10.0.1.12\",\n    \"subnetCidrBlock\": \"10.0.1.0/24\",\n    \"virtualRouterIp\": \"10.0.1.1\",\n    \"vlanTag\": 1952,\n    \"vnicId\": \"ocid1.vnic.oc1.us-sanjose-1.aaaaaaaaohaifixture0004\"\n  }\n]"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/opc/v2/allVolumeAttachments",
+    "status": "200",
+    "content_type": "application/json",
+    "body": "[\n  {\n    \"id\": \"ocid1.instance.oc1.us-sanjose-1.aaaaaaaaohaifixture0002\",\n    \"instanceId\": \"ocid1.instance.oc1.us-sanjose-1.aaaaaaaaohaifixture0002\",\n    \"ipv4\": \"169.254.0.2\",\n    \"iqn\": \"iqn.2015-02.oracle.boot:uefi\",\n    \"multipathDevices\": [],\n    \"port\": 3260,\n    \"volumeId\": \"ocid1.bootvolume.oc1.us-sanjose-1.aaaaaaaaohaifixture0005\"\n  }\n]"
+  }
+]

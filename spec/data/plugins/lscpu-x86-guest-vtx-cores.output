@@ -2,5 +2,7 @@
 # programs. Each different item in every column has an unique ID
 # starting from zero.
 # CPU,Core,Socket
-12,4,0
-13,5,1
+0,0,0
+2,1,0
+5,2,0
+9,4,1

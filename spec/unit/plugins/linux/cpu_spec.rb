@@ -513,10 +513,44 @@ describe Ohai::System, "General Linux cpu plugin" do
     end
   end
 
+  context "x86 host with a hybrid cpu (performance and efficiency cores)" do
+    # Intel Core i5-13500: 6 performance cores with 2 threads each and 8
+    # efficiency cores with 1 thread, so 14 cores and 20 cpus. lscpu reports
+    # "Thread(s) per core: 2", the maximum across the cores.
+    let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-no-cores.output")) }
+    let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-host-hybrid.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-host-hybrid-cores.output")) }
+
+    before do
+      allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
+      plugin.run
+    end
+
+    it "counts every cpu lscpu lists, not sockets x cores x threads" do
+      expect(plugin[:cpu][:total]).to eq(20)
+      expect(plugin[:cpu][:cpus]).to eq(20)
+    end
+
+    it "counts the distinct cores" do
+      expect(plugin[:cpu][:cores]).to eq(14)
+    end
+
+    it "counts the sockets" do
+      expect(plugin[:cpu][:real]).to eq(1)
+    end
+
+    it "keeps lscpu's per-core thread maximum" do
+      expect(plugin[:cpu][:threads_per_core]).to eq(2)
+      expect(plugin[:cpu][:cores_per_socket]).to eq(14)
+    end
+  end
+
   context "RHEL9 x86 host cpu with lscpu" do
     let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-no-cores.output")) }
     let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-host-rhel9.output")) }
-    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-host-cores.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-host-cores-rhel9.output")) }
 
     before do
       allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
@@ -866,8 +900,8 @@ describe Ohai::System, "General Linux cpu plugin" do
     }
 
     it_behaves_like "Common cpu info",
-      "12",               # default_cpu
-      8,                  # total_cpu
+      "0",                # default_cpu
+      4,                  # total_cpu
       2,                  # real_cpu
       true,               # ls_cpu
       "x86_64",           # architecture
@@ -902,9 +936,10 @@ describe Ohai::System, "General Linux cpu plugin" do
       expect(plugin[:cpu]).to have_key("mhz")
       expect(plugin[:cpu]["mhz"]).to eq("1596.085")
 
-      expect(plugin[:cpu].keys).to include("12", "13")
-      expect(plugin[:cpu]["12"]).not_to have_key("cache_size")
-      expect(plugin[:cpu]["13"]).not_to have_key("cache_size")
+      expect(plugin[:cpu].keys).to include("0", "2", "5", "9")
+      # 5 and 9 aren't in the /proc/cpuinfo fixture, so have no cache size
+      expect(plugin[:cpu]["5"]).not_to have_key("cache_size")
+      expect(plugin[:cpu]["9"]).not_to have_key("cache_size")
     end
   end
 end
@@ -1316,7 +1351,7 @@ describe Ohai::System, "arm64 linux cpu plugin" do
 
     it_behaves_like "Common cpu info",
       "0",                # default_cpu
-      4,                  # total_cpu
+      2,                  # total_cpu
       2,                  # real_cpu
       true,               # ls_cpu
       "aarch64",          # architecture

@@ -27,7 +27,7 @@ module ::Ohai::Mixin::DmiDecode
     when /VMware/
       return "vmware"
     when /Microsoft/
-      return "hyperv" if product.include?("Virtual Machine")
+      return "hyperv" if product.to_s.include?("Virtual Machine")
     when /Amazon EC2/
       return "amazonec2"
     when /QEMU/
@@ -36,6 +36,10 @@ module ::Ohai::Mixin::DmiDecode
       return "veertu"
     when /Parallels/
       return "parallels"
+    when /Apple/
+      # Apple's Virtualization.framework (used by Lima, UTM, Tart and Docker
+      # Desktop on macOS); real Mac hardware running Linux reports a Mac model
+      return "apple" if product.to_s.include?("Virtualization")
     end
 
     case product

@@ -137,15 +137,13 @@ Ohai.plugin(:Platform) do
     when /ubuntu/, /debian/, /linuxmint/, /raspbian/, /cumulus/, /kali/, /pop/
       # apt-get+dpkg almost certainly goes here
       "debian"
-    when /centos/, /redhat/, /oracle/, /almalinux/, /rocky/, /scientific/, /enterpriseenterprise/, /xenserver/, /xcp-ng/, /cloudlinux/, /alibabalinux/, /sangoma/, /clearos/, /parallels/, /ibm_powerkvm/, /nexus_centos/, /bigip/, /virtuozzo/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
+    when /centos/, /redhat/, /oracle/, /almalinux/, /rocky/, /scientific/, /enterpriseenterprise/, /xenserver/, /cloudlinux/, /alibabalinux/, /sangoma/, /clearos/, /parallels/, /ibm_powerkvm/, /nexus_centos/, /bigip/, /virtuozzo/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
       # NOTE: "rhel" should be reserved exclusively for recompiled rhel versions that are nearly perfectly compatible down to the platform_version.
       # The operating systems that are "rhel" should all be as compatible as rhel7 = centos7 = oracle7 = scientific7 (98%-ish core RPM version compatibility
       # and the version numbers MUST track the upstream). The appropriate EPEL version repo should work nearly perfectly.  Some variation like the
       # oracle kernel version differences and tuning and extra packages are clearly acceptable. Almost certainly some distros above (xenserver?)
       # should not be in this list. Please use fedora, below, instead. Also note that this is the only platform_family with this strict of a rule,
       # see the example of the debian platform family for how the rest of the platform_family designations should be used.
-      #
-      # TODO: when XCP-NG 7.4 support ends we can remove the xcp-ng match. 7.5+ reports as xenenterprise which we remap to xenserver
       "rhel"
     when /amazon/
       "amazon"

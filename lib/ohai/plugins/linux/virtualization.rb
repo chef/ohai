@@ -296,5 +296,53 @@ Ohai.plugin(:Virtualization) do
         end
       end
     end
+
+    # Nothing above named the hypervisor or container manager. Still report
+    # that there is one, under the names systemd-detect-virt uses for an
+    # unknown one. This runs last so any specific result wins.
+    unless virtualization[:systems].value?("guest")
+      # SMBIOS marks a virtual machine with bit 4 of the BIOS Characteristics
+      # Extension Byte 2, which dmidecode prints as "System is a virtual
+      # machine". Without dmidecode, read the bit the way systemd's
+      # detect_vm_smbios() does. Both need root.
+      bios_records = get_attribute(:dmi, :bios, :all_records) || []
+      smbios_vm = bios_records.any? do |record|
+        record[:Characteristics].respond_to?(:key?) && record[:Characteristics].key?("System is a virtual machine")
+      end
+      if bios_records.empty? && file_exist?("/sys/firmware/dmi/entries/0-0/raw")
+        begin
+          # byte 1 is the structure length; Extension Byte 2 is byte 0x13
+          raw = file_read("/sys/firmware/dmi/entries/0-0/raw").bytes
+          smbios_vm = raw.length >= 20 && raw[1] >= 20 && raw[19].anybits?(0x10)
+        rescue SystemCallError
+          logger.trace("Plugin Virtualization: cannot read /sys/firmware/dmi/entries/0-0/raw without root")
+        end
+      end
+
+      # The initial PID namespace has a fixed inode since Linux 3.8,
+      # PROC_PID_INIT_INO (0xEFFFFFFC) in include/linux/proc_ns.h, so any other
+      # inode means a container. This is systemd's last container check too.
+      pid_namespace = begin
+                        File.readlink("/proc/self/ns/pid")
+                      rescue SystemCallError
+                        nil
+                      end
+      pid_namespace_inode = pid_namespace.to_s[/\Apid:\[(\d+)\]\z/, 1]
+      in_container = pid_namespace_inode && pid_namespace_inode.to_i != 0xEFFFFFFC
+
+      if smbios_vm
+        logger.trace("Plugin Virtualization: SMBIOS marks this system as a virtual machine. Detecting as vm-other guest")
+        virtualization[:system] = "vm-other"
+        virtualization[:role] = "guest"
+        virtualization[:systems]["vm-other"] = "guest"
+      end
+
+      if in_container
+        logger.trace("Plugin Virtualization: #{pid_namespace} is not the initial PID namespace. Detecting as container-other guest")
+        virtualization[:system] = "container-other"
+        virtualization[:role] = "guest"
+        virtualization[:systems]["container-other"] = "guest"
+      end
+    end
   end
 end

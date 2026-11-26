@@ -522,6 +522,81 @@ describe Ohai::System, "Linux virtualization platform" do
     end
   end
 
+  # every example runs the WSL check, so default it to a non-WSL system
+  before do
+    allow(plugin).to receive(:file_exist?).with("/proc/sys/kernel/osrelease").and_return(false)
+    allow(plugin).to receive(:file_exist?).with("/proc/sys/fs/binfmt_misc/WSLInterop").and_return(false)
+  end
+
+  describe "when we are checking for WSL" do
+    # kernel releases reported by WSL users in microsoft/WSL#42306 (WSL 2),
+    # microsoft/WSL#5404 (WSL 2's first 4.19 kernel) and microsoft/WSL#6105 (WSL 1)
+    def kernel_release(release)
+      allow(plugin).to receive(:file_exist?).with("/proc/sys/kernel/osrelease").and_return(true)
+      allow(plugin).to receive(:file_read).with("/proc/sys/kernel/osrelease").and_return("#{release}\n")
+    end
+
+    it "sets wsl and hyperv guest on WSL 2" do
+      kernel_release("6.6.87.2-microsoft-standard-WSL2")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("wsl")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:wsl]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:hyperv]).to eq("guest")
+    end
+
+    it "sets wsl and hyperv guest on WSL 2's 4.19 kernel, which has no WSL2 suffix" do
+      kernel_release("4.19.104-microsoft-standard")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("wsl")
+      expect(plugin[:virtualization][:systems][:wsl]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:hyperv]).to eq("guest")
+    end
+
+    it "sets wsl guest but not hyperv on WSL 1, which is not a VM" do
+      kernel_release("4.4.0-18362-Microsoft")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("wsl")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:wsl]).to eq("guest")
+      expect(plugin[:virtualization][:systems]).not_to have_key(:hyperv)
+    end
+
+    it "sets wsl and hyperv guest from WSLInterop when WSL 2 boots a custom kernel" do
+      kernel_release("6.12.0")
+      allow(plugin).to receive(:file_exist?).with("/proc/sys/fs/binfmt_misc/WSLInterop").and_return(true)
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("wsl")
+      expect(plugin[:virtualization][:systems][:wsl]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:hyperv]).to eq("guest")
+    end
+
+    it "reports wsl over the kvm guest that nested virtualization suggests" do
+      kernel_release("6.6.87.2-microsoft-standard-WSL2")
+      allow(plugin).to receive(:file_exist?).with("/sys/devices/virtual/misc/kvm").and_return(true)
+      allow(plugin).to receive(:file_read).with("/proc/cpuinfo").and_return("fpu vme de pse hypervisor")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("wsl")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+    end
+
+    it "keeps a docker container running on WSL 2 as the system" do
+      kernel_release("6.6.87.2-microsoft-standard-WSL2")
+      allow(plugin).to receive(:file_exist?).with("/.dockerenv").and_return(true)
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("docker")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:docker]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:wsl]).to eq("guest")
+    end
+
+    it "does not set wsl for other kernels" do
+      kernel_release("6.1.0-37-amd64")
+      plugin.run
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
+    end
+  end
+
   describe "when we are checking for docker" do
     it "sets docker guest if /proc/self/cgroup exist and there are /docker/<hexadecimal> mounts" do
       self_cgroup = <<~CGROUP

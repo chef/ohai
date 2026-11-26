@@ -28,8 +28,13 @@ module Ohai
       # into ChefUtils::DSL::TrainHelpers
 
       # XXX: this needs better support directly in train
+      #
+      # @return [Array<String>] the paths matching the glob, empty if none match
       def dir_glob(path)
-        shell_out!("ls -d #{path}").stdout.split
+        return Dir.glob(path) unless __transport_connection
+
+        so = shell_out("ls -d #{path}")
+        so.exitstatus == 0 ? so.stdout.split : []
       end
     end
   end

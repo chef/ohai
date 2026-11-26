@@ -1,0 +1,9 @@
+fe80::/64 dev a+b proto kernel metric 256 pref medium
+fe80::/64 dev x#y proto kernel metric 256 pref medium
+fe80::/64 dev br-1a2b3c4d5e6f proto kernel metric 256 pref medium
+fe80::/64 dev fifteen-chars-x proto kernel metric 256 pref medium
+fe80::/64 dev eth0+1 proto kernel metric 256 pref medium
+fe80::/64 dev tilde~1 proto kernel metric 256 pref medium
+fe80::/64 dev comma,1 proto kernel metric 256 pref medium
+fe80::/64 dev excl!1 proto kernel metric 256 pref medium
+fe80::/64 dev end+ proto kernel metric 256 pref medium

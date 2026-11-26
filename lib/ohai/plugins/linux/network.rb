@@ -129,7 +129,7 @@ Ohai.plugin(:Network) do
         route_entry = Mash.new(destination: route_dest,
           family: family[:name])
         route_int = nil
-        if route_ending =~ /\bdev\s+([^\s]+)\b/
+        if route_ending =~ /\bdev\s+([^\s]+)/
           route_int = $1
         end
         # does any known interface own the src address?
@@ -207,7 +207,7 @@ Ohai.plugin(:Network) do
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
 
-      so = shell_out("#{ethtool_binary_path} #{tmp_int}")
+      so = shell_out([ethtool_binary_path, tmp_int])
       so.stdout.lines do |line|
         line.chomp!
         logger.trace("Plugin Network: Parsing ethtool output: #{line}")
@@ -233,7 +233,7 @@ Ohai.plugin(:Network) do
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
 
-      so = shell_out("#{ethtool_binary_path} -g #{tmp_int}")
+      so = shell_out([ethtool_binary_path, "-g", tmp_int])
       logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
       type = nil
       iface[tmp_int]["ring_params"] = {}
@@ -266,7 +266,7 @@ Ohai.plugin(:Network) do
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
 
-      so = shell_out("#{ethtool_binary_path} -l #{tmp_int}")
+      so = shell_out([ethtool_binary_path, "-l", tmp_int])
       logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
       type = nil
       iface[tmp_int]["channel_params"] = {}
@@ -299,7 +299,7 @@ Ohai.plugin(:Network) do
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
 
-      so = shell_out("#{ethtool_binary_path} -c #{tmp_int}")
+      so = shell_out([ethtool_binary_path, "-c", tmp_int])
       logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
       iface[tmp_int]["coalesce_params"] = {}
       so.stdout.lines.each do |line|
@@ -329,7 +329,7 @@ Ohai.plugin(:Network) do
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
 
-      so = shell_out("#{ethtool_binary_path} -k #{tmp_int}")
+      so = shell_out([ethtool_binary_path, "-k", tmp_int])
       Ohai::Log.debug("Plugin Network: Parsing ethtool output: #{so.stdout}")
       iface[tmp_int]["offload_params"] = {}
       so.stdout.lines.each do |line|
@@ -353,7 +353,7 @@ Ohai.plugin(:Network) do
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
 
-      so = shell_out("#{ethtool_binary_path} -a #{tmp_int}")
+      so = shell_out([ethtool_binary_path, "-a", tmp_int])
       logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
       iface[tmp_int]["pause_params"] = {}
       so.stdout.lines.each do |line|
@@ -377,7 +377,7 @@ Ohai.plugin(:Network) do
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
 
-      so = shell_out("#{ethtool_binary_path} -i #{tmp_int}")
+      so = shell_out([ethtool_binary_path, "-i", tmp_int])
       logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
       iface[tmp_int]["driver_info"] = {}
       so.stdout.lines.each do |line|
@@ -553,7 +553,7 @@ Ohai.plugin(:Network) do
       original_int = nil
 
       # Are we a formerly aliased interface?
-      if line =~ /#{cint}:(\d+)$/
+      if line =~ /#{Regexp.escape(cint)}:(\d+)$/
         sub_int = $1
         alias_int = "#{cint}:#{sub_int}"
         original_int = cint
@@ -726,8 +726,10 @@ Ohai.plugin(:Network) do
 
     # Match the lead line for an interface from iproute2
     # 3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
-    # The '@eth0:' portion doesn't exist on primary interfaces and thus is optional in the regex
-    IPROUTE_INT_REGEX ||= /^(\d+): ([0-9a-zA-Z@:;\.\-_]*?)(@[0-9a-zA-Z\-_]+|):\s/
+    # The '@eth0:' portion doesn't exist on primary interfaces and thus is optional in the regex.
+    # Names may hold any character but whitespace (a+b, x#y, end+, and foo:veth0@eth0 on
+    # older kernels); the parent is the part after the last "@".
+    IPROUTE_INT_REGEX ||= /^(\d+): (\S+?)(@[^\s:@]+|):\s/
 
     if which("ip")
       # families to get default routes from

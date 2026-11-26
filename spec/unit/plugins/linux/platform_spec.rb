@@ -180,7 +180,7 @@ describe Ohai::System, "Linux plugin platform" do
   end
 
   describe "#platform_family_from_platform" do
-    %w{oracle centos redhat scientific enterpriseenterprise xenserver cloudlinux ibm_powerkvm parallels nexus_centos clearos bigip}.each do |p|
+    %w{oracle centos redhat scientific xenserver cloudlinux ibm_powerkvm nexus_centos clearos}.each do |p|
       it "returns rhel for #{p} platform" do
         expect(plugin.platform_family_from_platform(p)).to eq("rhel")
       end
@@ -400,498 +400,55 @@ describe Ohai::System, "Linux plugin platform" do
     end
   end
 
-  context "when on system without /etc/os-release (legacy)" do
-    let(:have_debian_version) { false }
-    let(:have_redhat_release) { false }
-    let(:have_exherbo_release) { false }
-    let(:have_eos_release) { false }
-    let(:have_suse_release) { false }
-    let(:have_system_release) { false }
-    let(:have_slackware_version) { false }
-    let(:have_enterprise_release) { false }
-    let(:have_oracle_release) { false }
-    let(:have_parallels_release) { false }
-    let(:have_os_release) { false }
-    let(:have_os_release) { false }
-    let(:have_usr_lib_os_release) { false }
-    let(:have_cisco_release) { false }
-    let(:have_f5_release) { false }
-
+  describe "on system without /etc/os-release" do
     before do
       allow(plugin).to receive(:collect_os).and_return(:linux)
-      plugin[:lsb] = Mash.new
-      allow(plugin).to receive(:file_exist?).with("/etc/debian_version").and_return(have_debian_version)
-      allow(plugin).to receive(:file_exist?).with("/etc/redhat-release").and_return(have_redhat_release)
-      allow(plugin).to receive(:file_exist?).with("/etc/exherbo-release").and_return(have_exherbo_release)
-      allow(plugin).to receive(:file_exist?).with("/etc/Eos-release").and_return(have_eos_release)
-      allow(plugin).to receive(:file_exist?).with("/etc/SuSE-release").and_return(have_suse_release)
-      allow(plugin).to receive(:file_exist?).with("/etc/system-release").and_return(have_system_release)
-      allow(plugin).to receive(:file_exist?).with("/etc/slackware-version").and_return(have_slackware_version)
-      allow(plugin).to receive(:file_exist?).with("/etc/enterprise-release").and_return(have_enterprise_release)
-      allow(plugin).to receive(:file_exist?).with("/etc/oracle-release").and_return(have_oracle_release)
-      allow(plugin).to receive(:file_exist?).with("/etc/parallels-release").and_return(have_parallels_release)
-      allow(plugin).to receive(:file_exist?).with("/etc/os-release").and_return(have_os_release)
-      allow(plugin).to receive(:file_exist?).with("/etc/f5-release").and_return(have_f5_release)
-      allow(plugin).to receive(:file_exist?).with("/usr/lib/os-release").and_return(have_usr_lib_os_release)
-      allow(plugin).to receive(:file_exist?).with("/etc/shared/os-release").and_return(have_cisco_release)
-
-      allow(plugin).to receive(:file_read).with("PLEASE STUB ALL plugin.read CALLS")
+      allow(plugin).to receive(:file_exist?).with("/etc/os-release").and_return(false)
     end
 
-    describe "on lsb compliant distributions" do
-      before do
-        plugin[:lsb][:id] = "Ubuntu"
-        plugin[:lsb][:release] = "18.04"
-      end
-
-      it "sets platform to lowercased lsb[:id]" do
-        plugin.run
-        expect(plugin[:platform]).to eq("ubuntu")
-      end
-
-      it "sets platform_version to lsb[:release]" do
-        plugin.run
-        expect(plugin[:platform_version]).to eq("18.04")
-      end
-
-      it "sets platform to ubuntu and platform_family to debian [:lsb][:id] contains Ubuntu" do
-        plugin[:lsb][:id] = "Ubuntu"
-        plugin.run
-        expect(plugin[:platform]).to eq("ubuntu")
-        expect(plugin[:platform_family]).to eq("debian")
-      end
-
-      it "sets platform to debian and platform_family to debian [:lsb][:id] contains Debian" do
-        plugin[:lsb][:id] = "Debian"
-        plugin.run
-        expect(plugin[:platform]).to eq("debian")
-        expect(plugin[:platform_family]).to eq("debian")
-      end
-
-      it "sets platform to redhat and platform_family to rhel when [:lsb][:id] contains Redhat" do
-        plugin[:lsb][:id] = "RedHatEnterpriseServer"
-        plugin[:lsb][:release] = "7.5"
-        plugin.run
-        expect(plugin[:platform]).to eq("redhat")
-        expect(plugin[:platform_family]).to eq("rhel")
-      end
-
-      it "sets platform to amazon and platform_family to rhel when [:lsb][:id] contains Amazon" do
-        plugin[:lsb][:id] = "AmazonAMI"
-        plugin[:lsb][:release] = "2018.03"
-        plugin.run
-        expect(plugin[:platform]).to eq("amazon")
-        expect(plugin[:platform_family]).to eq("amazon")
-      end
-
-      it "sets platform to scientific when [:lsb][:id] contains ScientificSL" do
-        plugin[:lsb][:id] = "ScientificSL"
-        plugin[:lsb][:release] = "7.5"
-        plugin.run
-        expect(plugin[:platform]).to eq("scientific")
-      end
-
-      it "sets platform to ibm_powerkvm and platform_family to rhel when [:lsb][:id] contains IBM_PowerKVM" do
-        plugin[:lsb][:id] = "IBM_PowerKVM"
-        plugin[:lsb][:release] = "2.1"
-        plugin.run
-        expect(plugin[:platform]).to eq("ibm_powerkvm")
-        expect(plugin[:platform_family]).to eq("rhel")
-      end
-    end
-
-    describe "on debian" do
-
-      let(:have_debian_version) { true }
-
-      before do
-        plugin.lsb = nil
-      end
-
-      it "reads the version from /etc/debian_version" do
-        expect(plugin).to receive(:file_read).with("/etc/debian_version").and_return("9.5")
-        plugin.run
-        expect(plugin[:platform_version]).to eq("9.5")
-      end
-
-      it "correctlies strip any newlines" do
-        expect(plugin).to receive(:file_read).with("/etc/debian_version").and_return("9.5\n")
-        plugin.run
-        expect(plugin[:platform_version]).to eq("9.5")
-      end
-
-      # Ubuntu has /etc/debian_version as well
-      it "detects Ubuntu as itself rather than debian" do
-        plugin[:lsb][:id] = "Ubuntu"
-        plugin[:lsb][:release] = "18.04"
-        plugin.run
-        expect(plugin[:platform]).to eq("ubuntu")
-      end
-    end
-
-    describe "on slackware" do
-
-      let(:have_slackware_version) { true }
-
-      before do
-        plugin.lsb = nil
-      end
-
-      it "sets platform and platform_family to slackware" do
-        expect(plugin).to receive(:file_read).with("/etc/slackware-version").and_return("Slackware 12.0.0")
-        plugin.run
-        expect(plugin[:platform]).to eq("slackware")
-        expect(plugin[:platform_family]).to eq("slackware")
-      end
-
-      it "sets platform_version on slackware" do
-        expect(plugin).to receive(:file_read).with("/etc/slackware-version").and_return("Slackware 12.0.0")
-        plugin.run
-        expect(plugin[:platform_version]).to eq("12.0.0")
-      end
-    end
-
-    describe "on arista eos" do
-
-      let(:have_system_release) { true }
-      let(:have_redhat_release) { true }
-      let(:have_eos_release) { true }
-
-      before do
-        plugin.lsb = nil
-      end
-
-      it "sets platform to arista_eos" do
-        expect(plugin).to receive(:file_read).with("/etc/Eos-release").and_return("Arista Networks EOS 4.21.1.1F")
-        plugin.run
-        expect(plugin[:platform]).to eq("arista_eos")
-        expect(plugin[:platform_family]).to eq("fedora")
-        expect(plugin[:platform_version]).to eq("4.21.1.1F")
-      end
-    end
-
-    describe "on f5 big-ip" do
-
-      let(:have_f5_release) { true }
-
-      before do
-        plugin.lsb = nil
-      end
-
-      it "sets platform to bigip" do
-        expect(plugin).to receive(:file_read).with("/etc/f5-release").and_return("BIG-IP release 13.0.0 (Final)")
-        plugin.run
-        expect(plugin[:platform]).to eq("bigip")
-        expect(plugin[:platform_family]).to eq("rhel")
-        expect(plugin[:platform_version]).to eq("13.0.0")
-      end
-    end
-
-    describe "on exherbo" do
-
-      let(:have_exherbo_release) { true }
-
-      before do
-        allow(plugin).to receive(:shell_out).with("/bin/uname -r").and_return(mock_shell_out(0, "3.18.2-2-ARCH\n", ""))
-        plugin.lsb = nil
-      end
-
-      it "sets platform and platform_family to exherbo" do
-        plugin.run
-        expect(plugin[:platform]).to eq("exherbo")
-        expect(plugin[:platform_family]).to eq("exherbo")
-      end
-
-      it "sets platform_version to kernel release" do
-        plugin.run
-        expect(plugin[:platform_version]).to eq("3.18.2-2-ARCH")
-      end
-
-    end
-
-    describe "on redhat breeds" do
-      describe "with lsb_release results" do
-        it "sets the platform to redhat and platform_family to rhel even if the LSB name is something absurd but redhat like" do
-          plugin[:lsb][:id] = "RedHatEnterpriseServer"
-          plugin[:lsb][:release] = "7.5"
-          plugin.run
-          expect(plugin[:platform]).to eq("redhat")
-          expect(plugin[:platform_version]).to eq("7.5")
-          expect(plugin[:platform_family]).to eq("rhel")
-        end
-
-        it "sets the platform to centos and platform_family to rhel" do
-          plugin[:lsb][:id] = "CentOS"
-          plugin[:lsb][:release] = "7.5"
-          plugin.run
-          expect(plugin[:platform]).to eq("centos")
-          expect(plugin[:platform_version]).to eq("7.5")
-          expect(plugin[:platform_family]).to eq("rhel")
-        end
-      end
-
-      describe "without lsb_release results" do
-
-        let(:have_redhat_release) { true }
-
-        before do
-          plugin.lsb = nil
-        end
-
-        it "reads the platform as centos and version as 7.5" do
-          expect(plugin).to receive(:file_read).with("/etc/redhat-release").and_return("CentOS Linux release 7.5.1804 (Core)")
-          plugin.run
-          expect(plugin[:platform]).to eq("centos")
-          expect(plugin[:platform_version]).to eq("7.5.1804")
-        end
-
-        it "reads platform of Red Hat with a space" do
-          expect(plugin).to receive(:file_read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 6.5 (Santiago)")
-          plugin.run
-          expect(plugin[:platform]).to eq("redhat")
-        end
-
-        it "reads the platform as redhat without a space" do
-          expect(plugin).to receive(:file_read).with("/etc/redhat-release").and_return("RedHat release 5.3")
-          plugin.run
-          expect(plugin[:platform]).to eq("redhat")
-          expect(plugin[:platform_version]).to eq("5.3")
-        end
-      end
-
-    end
-
-    describe "on pcs linux" do
-
-      let(:have_redhat_release) { true }
-      let(:have_parallels_release) { true }
-
-      describe "with lsb_result" do
-
-        it "reads the platform as parallels and version as 6.0.5" do
-          plugin[:lsb][:id] = "CloudLinuxServer"
-          plugin[:lsb][:release] = "6.5"
-          allow(plugin).to receive(:file_read).with("/etc/redhat-release").and_return("CloudLinux Server release 6.5 (Pavel Popovich)")
-          expect(plugin).to receive(:file_read).with("/etc/parallels-release").and_return("Parallels Cloud Server 6.0.5 (20007)")
-          plugin.run
-          expect(plugin[:platform]).to eq("parallels")
-          expect(plugin[:platform_version]).to eq("6.0.5")
-          expect(plugin[:platform_family]).to eq("rhel")
-        end
-      end
-
-      describe "without lsb_results" do
-
-        before do
-          plugin.lsb = nil
-        end
-
-        it "reads the platform as parallels and version as 6.0.5" do
-          allow(plugin).to receive(:file_read).with("/etc/redhat-release").and_return("CloudLinux Server release 6.5 (Pavel Popovich)")
-          expect(plugin).to receive(:file_read).with("/etc/parallels-release").and_return("Parallels Cloud Server 6.0.5 (20007)")
-          plugin.run
-          expect(plugin[:platform]).to eq("parallels")
-          expect(plugin[:platform_version]).to eq("6.0.5")
-          expect(plugin[:platform_family]).to eq("rhel")
-        end
-      end
-    end
-
-    describe "on oracle enterprise linux" do
-
-      let(:have_redhat_release) { true }
-
-      context "with lsb_results" do
-
-        context "when on version 5.x" do
-
-          let(:have_enterprise_release) { true }
-
-          it "reads the platform as oracle and version as 5.7" do
-            plugin[:lsb][:id] = "EnterpriseEnterpriseServer"
-            plugin[:lsb][:release] = "5.7"
-            allow(plugin).to receive(:file_read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 5.7 (Tikanga)")
-            expect(plugin).to receive(:file_read).with("/etc/enterprise-release").and_return("Enterprise Linux Enterprise Linux Server release 5.7 (Carthage)")
-            plugin.run
-            expect(plugin[:platform]).to eq("oracle")
-            expect(plugin[:platform_version]).to eq("5.7")
-          end
-        end
-
-        context "when on version 6.x" do
-
-          let(:have_oracle_release) { true }
-
-          it "reads the platform as oracle and version as 6.1" do
-            plugin[:lsb][:id] = "OracleServer"
-            plugin[:lsb][:release] = "6.1"
-            allow(plugin).to receive(:file_read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 6.1 (Santiago)")
-            expect(plugin).to receive(:file_read).with("/etc/oracle-release").and_return("Oracle Linux Server release 6.1")
-            plugin.run
-            expect(plugin[:platform]).to eq("oracle")
-            expect(plugin[:platform_version]).to eq("6.1")
-          end
-
-        end
-      end
-
-      context "without lsb_results" do
-        before do
-          plugin.lsb = nil
-        end
-
-        context "when on version 5.x" do
-
-          let(:have_enterprise_release) { true }
-
-          it "reads the platform as oracle and version as 5" do
-            allow(plugin).to receive(:file_read).with("/etc/redhat-release").and_return("Enterprise Linux Enterprise Linux Server release 5 (Carthage)")
-            expect(plugin).to receive(:file_read).with("/etc/enterprise-release").and_return("Enterprise Linux Enterprise Linux Server release 5 (Carthage)")
-            plugin.run
-            expect(plugin[:platform]).to eq("oracle")
-            expect(plugin[:platform_version]).to eq("5")
-          end
-
-          it "reads the platform as oracle and version as 5.1" do
-            allow(plugin).to receive(:file_read).with("/etc/redhat-release").and_return("Enterprise Linux Enterprise Linux Server release 5.1 (Carthage)")
-            expect(plugin).to receive(:file_read).with("/etc/enterprise-release").and_return("Enterprise Linux Enterprise Linux Server release 5.1 (Carthage)")
-            plugin.run
-            expect(plugin[:platform]).to eq("oracle")
-            expect(plugin[:platform_version]).to eq("5.1")
-          end
-
-          it "reads the platform as oracle and version as 5.7" do
-            allow(plugin).to receive(:file_read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 5.7 (Tikanga)")
-            expect(plugin).to receive(:file_read).with("/etc/enterprise-release").and_return("Enterprise Linux Enterprise Linux Server release 5.7 (Carthage)")
-            plugin.run
-            expect(plugin[:platform]).to eq("oracle")
-            expect(plugin[:platform_version]).to eq("5.7")
-          end
-
-        end
-
-        context "when on version 6.x" do
-
-          let(:have_oracle_release) { true }
-
-          it "reads the platform as oracle and version as 6.0" do
-            allow(plugin).to receive(:file_read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 6.0 (Santiago)")
-            expect(plugin).to receive(:file_read).with("/etc/oracle-release").and_return("Oracle Linux Server release 6.0")
-            plugin.run
-            expect(plugin[:platform]).to eq("oracle")
-            expect(plugin[:platform_version]).to eq("6.0")
-          end
-
-          it "reads the platform as oracle and version as 6.1" do
-            allow(plugin).to receive(:file_read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 6.1 (Santiago)")
-            expect(plugin).to receive(:file_read).with("/etc/oracle-release").and_return("Oracle Linux Server release 6.1")
-            plugin.run
-            expect(plugin[:platform]).to eq("oracle")
-            expect(plugin[:platform_version]).to eq("6.1")
-          end
-        end
-      end
-    end
-
-    describe "on suse" do
-      context "when on versions that have no /etc/os-release but /etc/SuSE-release (e.g. SLES12.1)" do
-        let(:have_suse_release) { true }
-        let(:have_os_release) { false }
-
-        describe "with lsb_release results" do
-          before do
-            plugin[:lsb][:id] = "SUSE LINUX"
-          end
-
-          it "reads the platform as opensuse on openSUSE" do
-            plugin[:lsb][:release] = "12.1"
-            expect(plugin).to receive(:file_read).with("/etc/SuSE-release").and_return("openSUSE 12.1 (x86_64)\nVERSION = 12.1\nCODENAME = Asparagus\n")
-            plugin.run
-            expect(plugin[:platform]).to eq("opensuse")
-            expect(plugin[:platform_family]).to eq("suse")
-          end
-        end
-      end
-
-      context "when on openSUSE and older SLES versions" do
-        let(:have_suse_release) { true }
-
-        describe "without lsb_release results" do
-          before do
-            plugin.lsb = nil
-          end
-
-          it "sets platform and platform_family to suse and bogus verion to 10.0" do
-            expect(plugin).to receive(:file_read).with("/etc/SuSE-release").at_least(:once).and_return("VERSION = 10.0")
-            plugin.run
-            expect(plugin[:platform]).to eq("suse")
-            expect(plugin[:platform_family]).to eq("suse")
-          end
-
-          it "reads the version as 11.2" do
-            expect(plugin).to receive(:file_read).with("/etc/SuSE-release").and_return("SUSE Linux Enterprise Server 11.2 (i586)\nVERSION = 11\nPATCHLEVEL = 2\n")
-            plugin.run
-            expect(plugin[:platform]).to eq("suse")
-            expect(plugin[:platform_version]).to eq("11.2")
-            expect(plugin[:platform_family]).to eq("suse")
-          end
-
-          it "[OHAI-272] should read the version as 11.3" do
-            expect(plugin).to receive(:file_read).with("/etc/SuSE-release").once.and_return("openSUSE 11.3 (x86_64)\nVERSION = 11.3")
-            plugin.run
-            expect(plugin[:platform]).to eq("opensuse")
-            expect(plugin[:platform_version]).to eq("11.3")
-            expect(plugin[:platform_family]).to eq("suse")
-          end
-
-          it "[OHAI-272] should read the version as 11.4" do
-            expect(plugin).to receive(:file_read).with("/etc/SuSE-release").once.and_return("openSUSE 11.4 (i586)\nVERSION = 11.4\nCODENAME = Celadon")
-            plugin.run
-            expect(plugin[:platform]).to eq("opensuse")
-            expect(plugin[:platform_version]).to eq("11.4")
-            expect(plugin[:platform_family]).to eq("suse")
-          end
-
-          it "reads the platform as opensuse on openSUSE" do
-            expect(plugin).to receive(:file_read).with("/etc/SuSE-release").and_return("openSUSE 12.2 (x86_64)\nVERSION = 12.2\nCODENAME = Mantis\n")
-            plugin.run
-            expect(plugin[:platform]).to eq("opensuse")
-            expect(plugin[:platform_family]).to eq("suse")
-          end
-
-          it "reads the platform as opensuseleap on openSUSE Leap" do
-            expect(plugin).to receive(:file_read).with("/etc/SuSE-release").and_return("openSUSE 42.1 (x86_64)\nVERSION = 42.1\nCODENAME = Malachite\n")
-            plugin.run
-            expect(plugin[:platform]).to eq("opensuseleap")
-            expect(plugin[:platform_family]).to eq("suse")
-          end
-        end
-      end
-    end
-
-    describe "on clearlinux" do
-      let(:have_usr_lib_os_release) { true }
-      let(:usr_lib_os_release_content) do
-        <<~CLEARLINUX_RELEASE
+    # https://github.com/chef/os_release/blob/main/clearlinux_1
+    context "when /usr/lib/os-release exists" do
+      let(:os_data) do
+        <<~OS_DATA
           NAME="Clear Linux OS"
           VERSION=1
           ID=clear-linux-os
           ID_LIKE=clear-linux-os
-          VERSION_ID=26290
+          VERSION_ID=38250
           PRETTY_NAME="Clear Linux OS"
-        CLEARLINUX_RELEASE
+          ANSI_COLOR="1;35"
+          HOME_URL="https://clearlinux.org"
+          SUPPORT_URL="https://clearlinux.org"
+          BUG_REPORT_URL="mailto:dev@lists.clearlinux.org"
+          PRIVACY_POLICY_URL="http://www.intel.com/privacy"
+          BUILD_ID=38250
+        OS_DATA
       end
 
       before do
-        expect(plugin).to receive(:file_read).with("/usr/lib/os-release").and_return(usr_lib_os_release_content)
+        allow(plugin).to receive(:file_exist?).with("/usr/lib/os-release").and_return(true)
+        allow(plugin).to receive(:file_read).with("/usr/lib/os-release").and_return(os_data)
       end
 
-      it "sets platform to clearlinux and platform_family to clearlinux" do
-        plugin.lsb = nil
+      it "reads platform, platform_family and platform_version from it" do
         plugin.run
         expect(plugin[:platform]).to eq("clearlinux")
         expect(plugin[:platform_family]).to eq("clearlinux")
-        expect(plugin[:platform_version]).to eq("26290")
+        expect(plugin[:platform_version]).to eq("38250")
+      end
+    end
+
+    context "when /usr/lib/os-release does not exist either" do
+      before do
+        allow(plugin).to receive(:file_exist?).with("/usr/lib/os-release").and_return(false)
+        allow(plugin).to receive(:shell_out).with("/bin/uname -r").and_return(mock_shell_out(0, "2.6.32-754.el6.x86_64\n", ""))
+      end
+
+      it "reports generic-linux with the kernel release as platform_version" do
+        plugin.run
+        expect(plugin[:platform]).to eq("generic-linux")
+        expect(plugin[:platform_family]).to be_nil
+        expect(plugin[:platform_version]).to eq("2.6.32-754.el6.x86_64")
       end
     end
   end

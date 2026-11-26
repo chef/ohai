@@ -63,7 +63,7 @@ describe Ohai::Mixin::DmiDecode, "guest_from_dmi_data" do
 
   describe "returns nil if manufactuer is 'Microsoft', but product is not 'Virtual Machine'" do
     it "returns nil" do
-      expect(mixin.guest_from_dmi_data("Microsot", "Zune", "2018")).to be_nil
+      expect(mixin.guest_from_dmi_data("Microsoft", "Zune", "2018")).to be_nil
     end
   end
 

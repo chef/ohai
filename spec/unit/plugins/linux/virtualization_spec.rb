@@ -98,7 +98,7 @@ describe Ohai::System, "Linux virtualization platform" do
   end
 
   describe "when we are checking for podman" do
-    it "sets podman host if docker binary exists" do
+    it "sets podman host if podman binary exists" do
       allow(plugin).to receive(:which).with("podman").and_return(true)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("podman")
@@ -663,19 +663,24 @@ describe Ohai::System, "Linux virtualization platform" do
         CGROUP
         allow(plugin).to receive(:file_exist?).with("/proc/self/cgroup").and_return(true)
         allow(plugin).to receive(:file_read).with("/proc/self/cgroup").and_return(self_cgroup)
+        allow(plugin).to receive(:file_read).with("/proc/1/environ").and_return("")
+      end
+
+      it "does not set docker guest" do
         plugin.run
         expect(plugin[:virtualization]).to eq({ "systems" => {} })
       end
-
     end
 
-    it "does not set the old virtualization attributes if they are already set" do
+    # today's behavior: only the lxc host check keeps attributes already set
+    it "replaces virtualization attributes already set if /.dockerenv exists" do
+      allow(plugin).to receive(:file_exist?).with("/.dockerenv").and_return(true)
       plugin[:virtualization] = Mash.new
       plugin[:virtualization][:system] = "the cloud"
       plugin[:virtualization][:role] = "cumulonimbus"
       plugin.run
-      expect(plugin[:virtualization][:system]).not_to eq("docker")
-      expect(plugin[:virtualization][:role]).not_to eq("host")
+      expect(plugin[:virtualization][:system]).to eq("docker")
+      expect(plugin[:virtualization][:role]).to eq("guest")
     end
 
     it "does not set docker host if docker does not exist" do

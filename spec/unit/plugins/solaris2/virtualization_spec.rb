@@ -29,6 +29,9 @@ describe Ohai::System, "Solaris virtualization platform" do
     PSRINFO_PV
 
     allow(plugin).to receive(:collect_os).and_return(:solaris2)
+    # the plugin checks zoneadm with File.executable?, not file_exist?
+    allow(File).to receive(:executable?).and_call_original
+    allow(File).to receive(:executable?).with("/usr/sbin/zoneadm").and_return(false)
 
     # default to all requested Files not existing
     allow(plugin).to receive(:file_exist?).with("/usr/sbin/psrinfo").and_return(false)

@@ -119,6 +119,10 @@ describe Ohai::System, "Darwin cpu plugin" do
   end
 
   it "sets cpu[:flags] to array of flags" do
-    expect(@plugin[:cpu][:flags]).to eq(["fpu", "vme", "de", "pse", "tsc", "msr", "pae", "mce", "cx8", "apic", "sep", "mtrr", "pge", "mca", "cmov", "pat", "pse36", "clfsh", "ds", "acpi", "mmx", "fxsr", "sse", "sse2", "ss", "htt", "tm", "pbe", "sse3", "pclmulqdq", "dtes64", "mon", "dscpl", "vmx", "smx", "est", "tm2", "ssse3", "fma", "cx16", "tpr", "pdcm", "sse4.1", "sse4.2", "x2apic", "movbe", "popcnt", "aes", "pcid", "xsave", "osxsave", "seglim64", "tsctmr", "avx1.0", "rdrand", "f16c"])
+    expect(@plugin[:cpu][:flags]).to eq(["syscall", "xd", "1gbpage", "em64t", "lahf", "lzcnt", "rdtscp", "tsci", "smep", "erms", "rdwrfsgs", "tsc_thread_offset", "bmi1", "hle", "avx2", "bmi2", "invpcid", "rtm", "fpu_csds", "fpu", "vme", "de", "pse", "tsc", "msr", "pae", "mce", "cx8", "apic", "sep", "mtrr", "pge", "mca", "cmov", "pat", "pse36", "clfsh", "ds", "acpi", "mmx", "fxsr", "sse", "sse2", "ss", "htt", "tm", "pbe", "sse3", "pclmulqdq", "dtes64", "mon", "dscpl", "vmx", "smx", "est", "tm2", "ssse3", "fma", "cx16", "tpr", "pdcm", "sse4.1", "sse4.2", "x2apic", "movbe", "popcnt", "aes", "pcid", "xsave", "osxsave", "seglim64", "tsctmr", "avx1.0", "rdrand", "f16c"])
+  end
+
+  it "includes the extended and leaf 7 features in cpu[:flags]" do
+    expect(@plugin[:cpu][:flags]).to include("avx2", "bmi2", "lzcnt", "rdtscp")
   end
 end

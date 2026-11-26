@@ -115,6 +115,7 @@ Ohai.plugin(:Platform) do
       "alinux" => "alibabalinux",
       "amzn" => "amazon",
       "archarm" => "arch",
+      "clear-linux-os" => "clearlinux",
       "cumulus-linux" => "cumulus",
       "ol" => "oracle",
       "opensuse-leap" => "opensuseleap",

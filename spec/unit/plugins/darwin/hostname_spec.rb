@@ -40,4 +40,21 @@ describe Ohai::System, "Darwin hostname plugin" do
     @plugin.run
     expect(@plugin[:domain]).to eq("bethell")
   end
+
+  context "when DNS answers in lowercase" do
+    # macOS names the host from its ComputerName, keeping its case, while the
+    # local resolver returns the canonical name in lowercase
+    before do
+      allow(@plugin).to receive(:resolve_fqdn).and_call_original
+      allow(@plugin).to receive(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "Build-Mac\n", ""))
+      allow(@plugin).to receive(:shell_out).with("hostname").and_return(mock_shell_out(0, "Build-Mac.example.test\n", ""))
+      allow(@plugin).to receive(:canonicalize_hostname).with("Build-Mac.example.test").and_return("build-mac.example.test")
+    end
+
+    it "keeps the machine's case in the fqdn" do
+      @plugin.run
+      expect(@plugin[:fqdn]).to eq("Build-Mac.example.test")
+      expect(@plugin[:domain]).to eq("example.test")
+    end
+  end
 end

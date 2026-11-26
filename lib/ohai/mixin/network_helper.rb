@@ -80,12 +80,33 @@ module Ohai
       def canonicalize_hostname_with_retries(hostname)
         retries = 3
         begin
-          canonicalize_hostname(hostname)
+          preserve_hostname_case(canonicalize_hostname(hostname), hostname)
         rescue
           retries -= 1
           retry if retries > 0
           nil
         end
+      end
+
+      # DNS names are case-insensitive, and resolvers commonly answer in
+      # lowercase, so canonicalizing "Build-Mac.example.test" returns
+      # "build-mac.example.test". Keep the case the machine's own name uses when
+      # the answer is that name, or that host label with a domain added.
+      # Any other answer is returned unchanged.
+      #
+      # @param canonical [String, nil] the canonicalized name
+      # @param hostname [String] the machine's own name
+      #
+      # @return [String, nil]
+      def preserve_hostname_case(canonical, hostname)
+        return canonical if canonical.nil? || hostname.nil? || hostname.empty?
+        return hostname if canonical.casecmp?(hostname)
+
+        host_label = hostname.split(".", 2).first
+        canonical_label, domain = canonical.split(".", 2)
+        return "#{host_label}.#{domain}" if domain && canonical_label.casecmp?(host_label)
+
+        canonical
       end
     end
   end

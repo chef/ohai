@@ -48,6 +48,7 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(plugin).to receive(:which).with("docker").and_return(nil)
     allow(plugin).to receive(:which).with("podman").and_return(nil)
     allow(plugin).to receive(:nova_exists?).and_return(false)
+    allow(plugin).to receive(:file_exist?).with("/proc/self/mountinfo").and_return(false)
   end
 
   describe "when we are checking for xen" do
@@ -730,5 +731,71 @@ describe Ohai::System, "Linux virtualization platform" do
   it "does not set virtualization if no tests match" do
     plugin.run
     expect(plugin[:virtualization]).to eq({ "systems" => {} })
+  end
+
+  describe "when we are checking for a container from its root mount" do
+    # root mount lines from containers on Debian 13 with Docker 29 and
+    # containerd 2.4, cgroup v2: /proc/self/cgroup was "0::/" in both
+    let(:docker_root) do
+      "1692 1550 0:93 / / rw,relatime - overlay overlay rw,lowerdir=/var/lib/docker/overlay2/l/3YGK4M4VCLRAQVW4XNUZOOOLC7:/var/lib/docker/overlay2/l/6P2RZGEEZKXQKSLJ3LORUSJLAR,upperdir=/var/lib/docker/overlay2/77be25d9a07bcf04b9f6127b7a5fb12f87e7b1ae383b4793091903298d912c68/diff,workdir=/var/lib/docker/overlay2/77be25d9a07bcf04b9f6127b7a5fb12f87e7b1ae383b4793091903298d912c68/work,nouserxattr\n"
+    end
+    let(:containerd_root) do
+      "1683 1503 0:93 / / rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/work,uuid=on,nouserxattr\n"
+    end
+    let(:other_mounts) { "1694 1692 0:146 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw\n" }
+
+    before do
+      allow(plugin).to receive(:file_exist?).with("/proc/self/cgroup").and_return(true)
+      allow(plugin).to receive(:file_read).with("/proc/self/cgroup").and_return("0::/\n")
+      allow(plugin).to receive(:file_read).with("/proc/1/environ").and_return("PATH=/usr/bin\u0000HOME=/root\u0000")
+      allow(plugin).to receive(:file_exist?).with("/proc/self/mountinfo").and_return(true)
+    end
+
+    it "detects a docker container without /.dockerenv" do
+      allow(plugin).to receive(:file_read).with("/proc/self/mountinfo").and_return(docker_root + other_mounts)
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("docker")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:docker]).to eq("guest")
+    end
+
+    it "detects a containerd container" do
+      allow(plugin).to receive(:file_read).with("/proc/self/mountinfo").and_return(containerd_root + other_mounts)
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("containerd")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:containerd]).to eq("guest")
+    end
+
+    it "detects the container on top of a virtual machine" do
+      plugin[:dmi] = { system: { manufacturer: "QEMU", product_name: "Standard PC (Q35 + ICH9, 2009)", version: "pc-q35-9.2" } }
+      allow(plugin).to receive(:file_read).with("/proc/self/mountinfo").and_return(containerd_root)
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("containerd")
+      expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:containerd]).to eq("guest")
+    end
+
+    it "keeps docker from /.dockerenv without adding another system" do
+      allow(plugin).to receive(:file_exist?).with("/.dockerenv").and_return(true)
+      allow(plugin).to receive(:file_read).with("/proc/self/mountinfo").and_return(containerd_root)
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("docker")
+      expect(plugin[:virtualization][:systems].keys).to eq(["docker"])
+    end
+
+    it "detects nothing on a host whose root isn't an overlay" do
+      allow(plugin).to receive(:file_read).with("/proc/self/mountinfo")
+        .and_return("29 1 259:2 / / rw,relatime shared:1 - ext4 /dev/nvme0n1p2 rw\n" + other_mounts)
+      plugin.run
+      expect(plugin[:virtualization][:systems]).to eq({})
+    end
+
+    it "detects nothing for an overlay root from elsewhere, such as a live image" do
+      allow(plugin).to receive(:file_read).with("/proc/self/mountinfo")
+        .and_return("25 1 0:30 / / rw,relatime - overlay overlay rw,lowerdir=/run/rootfsbase,upperdir=/run/overlayfs,workdir=/run/ovlwork\n")
+      plugin.run
+      expect(plugin[:virtualization][:systems]).to eq({})
+    end
   end
 end

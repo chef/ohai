@@ -24,6 +24,29 @@ Ohai.plugin(:Virtualization) do
   require_relative "../../mixin/dmi_decode"
   include Ohai::Mixin::DmiDecode
 
+  # Container runtimes keep a container's root filesystem layers under their
+  # own directory, so an overlay root mount names the runtime even when there
+  # is no other marker: with cgroup v2 and a private cgroup namespace
+  # /proc/self/cgroup is just "0::/", and containerd (and so most Kubernetes
+  # pods) creates no /.dockerenv.
+  #
+  # @return [String, nil] "docker" or "containerd"
+  def container_from_root_mount
+    return nil unless file_exist?("/proc/self/mountinfo")
+
+    # the last "/" mount is the one in use when several are stacked
+    root = file_read("/proc/self/mountinfo").lines.reverse.find { |line| line.split[4] == "/" }
+    return nil unless root
+
+    fstype, _source, options = root.split(" - ", 2)[1].to_s.split
+    return nil unless fstype.to_s.include?("overlay")
+
+    case options
+    when %r{/var/lib/docker/} then "docker"
+    when %r{/var/lib/containerd/} then "containerd"
+    end
+  end
+
   def lxc_version_exists?
     which("lxc-version") || which("lxc-start")
   end
@@ -268,6 +291,16 @@ Ohai.plugin(:Virtualization) do
       virtualization[:system] = "docker"
       virtualization[:role] = "guest"
       virtualization[:systems][:docker] = "guest"
+    end
+
+    # containers none of the checks above recognized
+    unless %w{docker podman lxc lxd nspawn containerd}.any? { |s| virtualization[:systems][s] == "guest" }
+      if (runtime = container_from_root_mount)
+        logger.trace("Plugin Virtualization: the root filesystem is a #{runtime} overlay. Detecting as #{runtime} guest")
+        virtualization[:system] = runtime
+        virtualization[:role] = "guest"
+        virtualization[:systems][runtime.to_sym] = "guest"
+      end
     end
 
     # Detect LXD

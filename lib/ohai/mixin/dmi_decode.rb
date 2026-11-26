@@ -22,6 +22,19 @@ module ::Ohai::Mixin::DmiDecode
     case manufacturer
     when /OpenStack/
       return "openstack"
+    when /^innotek GmbH/
+      # VirtualBox's system vendor. Its product is the host's when the VM has
+      # DmiUseHostInfo set, so the VirtualBox product check below misses it.
+      return "vbox"
+    when /^KubeVirt/
+      return "kvm"
+    when /^Nutanix/
+      # virt-what also requires the AHV product before reporting nutanix_ahv
+      return "kvm" if product.to_s.start_with?("AHV")
+    when /^oVirt/
+      return "kvm"
+    when /^Bochs/
+      return "bochs"
     when /Xen/
       return "xen"
     when /VMware/
@@ -47,6 +60,10 @@ module ::Ohai::Mixin::DmiDecode
       return "kvm"
     when /BHYVE/
       return "bhyve"
+    when /^Google Compute Engine/
+      return "gce"
+    when /^Alibaba Cloud ECS/
+      return "alibaba"
     end
 
     nil # doesn't look like a virt

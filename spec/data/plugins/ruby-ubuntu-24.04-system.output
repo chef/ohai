@@ -1,0 +1,1 @@
+platform=aarch64-linux-gnu,version=3.2.3,release_date=2024-01-18,target=aarch64-unknown-linux-gnu,target_cpu=aarch64,target_vendor=unknown,target_os=linux-gnu,host=aarch64-unknown-linux-gnu,host_cpu=aarch64,host_os=linux-gnu,host_vendor=unknown,bin_dir=/usr/bin,ruby_bin=/usr/bin/ruby3.2,gem_bin=/usr/bin/gem3.2,gems_dir=/var/lib/gems/3.2.0,

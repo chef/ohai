@@ -18,43 +18,58 @@
 
 require "spec_helper"
 
-ruby_bin = File.join(::RbConfig::CONFIG["bindir"], ::RbConfig::CONFIG["ruby_install_name"])
-
 describe Ohai::System, "plugin ruby" do
+  let(:plugin) { get_plugin("ruby").tap { |p| p[:languages] = Mash.new } }
+  let(:embedded_bindir) { ::RbConfig::CONFIG["bindir"] }
 
-  before(:all) do
-    @plugin = get_plugin("ruby")
-    @plugin[:languages] = Mash.new
-    @plugin.run
-
-    @ruby_ohai_data_pristine = @plugin[:languages][:ruby]
-  end
+  # recorded from the system Ruby on Ubuntu 24.04 (ruby 3.2.3) with the command this plugin runs
+  let(:system_ruby_output) { File.read(File.join(SPEC_PLUGIN_PATH, "ruby-ubuntu-24.04-system.output")) }
 
   before do
-    @ruby_ohai_data = @ruby_ohai_data_pristine.dup
+    allow(plugin).to receive(:default_paths).and_return([embedded_bindir, ::Gem.bindir, "/usr/local/bin", "/usr/bin", "/bin"].uniq.join(File::PATH_SEPARATOR))
   end
 
-  {
-    platform: RUBY_PLATFORM,
-    version: RUBY_VERSION,
-    release_date: RUBY_RELEASE_DATE,
-    target: ::RbConfig::CONFIG["target"],
-    target_cpu: ::RbConfig::CONFIG["target_cpu"],
-    target_vendor: ::RbConfig::CONFIG["target_vendor"],
-    target_os: ::RbConfig::CONFIG["target_os"],
-    host: ::RbConfig::CONFIG["host"],
-    host_cpu: ::RbConfig::CONFIG["host_cpu"],
-    host_os: ::RbConfig::CONFIG["host_os"],
-    host_vendor: ::RbConfig::CONFIG["host_vendor"],
-    gems_dir: `#{ruby_bin} #{::RbConfig::CONFIG["bindir"]}/gem env gemdir`.chomp,
-    gem_bin: [ ::Gem.default_exec_format % "gem", "gem" ].map do |bin|
-      "#{::RbConfig::CONFIG["bindir"]}/#{bin}"
-    end.find { |bin| ::File.exist? bin },
-    ruby_bin: ruby_bin,
-  }.each do |attribute, value|
-    it "has #{attribute} set to #{value.inspect}" do
-      expect(@ruby_ohai_data[attribute]).to eql(value)
+  it "runs ruby without the Ruby that runs Ohai in PATH" do
+    expect(plugin).to receive(:shell_out) do |cmd, **options|
+      expect(cmd).to start_with("ruby -e")
+      expect(options[:env]["PATH"].split(File::PATH_SEPARATOR)).to eq(["/usr/local/bin", "/usr/bin", "/bin"])
+      mock_shell_out(0, system_ruby_output, "")
     end
+    plugin.run
   end
 
+  it "reports the system's Ruby" do
+    allow(plugin).to receive(:shell_out).and_return(mock_shell_out(0, system_ruby_output, ""))
+    plugin.run
+    expect(plugin[:languages][:ruby]).to eq(
+      "platform" => "aarch64-linux-gnu",
+      "version" => "3.2.3",
+      "release_date" => "2024-01-18",
+      "target" => "aarch64-unknown-linux-gnu",
+      "target_cpu" => "aarch64",
+      "target_vendor" => "unknown",
+      "target_os" => "linux-gnu",
+      "host" => "aarch64-unknown-linux-gnu",
+      "host_cpu" => "aarch64",
+      "host_os" => "linux-gnu",
+      "host_vendor" => "unknown",
+      "bin_dir" => "/usr/bin",
+      "ruby_bin" => "/usr/bin/ruby3.2",
+      "gem_bin" => "/usr/bin/gem3.2",
+      "gems_dir" => "/var/lib/gems/3.2.0"
+    )
+  end
+
+  it "does not set languages/ruby when the system has no Ruby" do
+    # what the shell returns on Ubuntu 24.04 with no ruby in PATH
+    allow(plugin).to receive(:shell_out).and_return(mock_shell_out(127, "", "sh: 1: ruby: not found\n"))
+    plugin.run
+    expect(plugin[:languages]).not_to have_key(:ruby)
+  end
+
+  it "does not set languages/ruby when ruby cannot be run" do
+    allow(plugin).to receive(:shell_out).and_raise(Ohai::Exceptions::Exec)
+    plugin.run
+    expect(plugin[:languages]).not_to have_key(:ruby)
+  end
 end

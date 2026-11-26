@@ -29,6 +29,42 @@ Ohai.plugin(:Virtualization) do
     shell_out("/usr/sbin/zoneadm list -p").stdout.split(":").first
   end
 
+  # Records a kernel zone or logical domain. It becomes the primary system
+  # unless a guest was already found, or, for a host role, unless the global
+  # zone hosts other zones.
+  def add_virtinfo_system(system, role)
+    virtualization[:systems][system] = role
+    return if virtualization[:role] == "guest"
+    return if role == "host" && virtualization.key?(:guests)
+
+    virtualization[:system] = system
+    virtualization[:role] = role
+  end
+
+  # Solaris 11.4 virtinfo(8) lists a "kernel-zone" environment in the
+  # "current" class when run inside a kernel zone. virtinfo before 11.4 has
+  # no get subcommand and never prints such a row.
+  def kernel_zone_guest?(virtinfo_path)
+    shell_out("#{virtinfo_path} get all").stdout.lines.any? do |line|
+      line.split[0..1] == %w{kernel-zone current}
+    end
+  end
+
+  # SPARC only: the DOMAINROLE line of `virtinfo -ap` says whether this
+  # logical domain is the control domain
+  def ldom_role(virtinfo_path)
+    domainrole = shell_out("#{virtinfo_path} -ap").stdout.lines.find { |line| line.start_with?("DOMAINROLE|") }
+    return unless domainrole
+
+    fields = domainrole.chomp.split("|").drop(1).to_h do |field|
+      key, value = field.split("=", 2)
+      [key, value]
+    end
+    return unless fields["impl"] == "LDoms"
+
+    fields["control"] == "true" ? "host" : "guest"
+  end
+
   collect_data(:solaris2) do
     virtualization Mash.new
     virtualization[:systems] = Mash.new
@@ -85,6 +121,18 @@ Ohai.plugin(:Virtualization) do
         virtualization[:systems][:zone] = "host"
         virtualization[:guests] = zones
       end
+
+      if zones.values.any? { |zone| zone["brand"] == "solaris-kz" }
+        virtualization[:systems]["kernel-zone"] = "host"
+      end
+    end
+
+    virtinfo_path = Ohai.abs_path("/usr/sbin/virtinfo")
+    if file_exist?(virtinfo_path)
+      add_virtinfo_system("kernel-zone", "guest") if kernel_zone_guest?(virtinfo_path)
+
+      role = ldom_role(virtinfo_path)
+      add_virtinfo_system("ldom", role) if role
     end
   end
 end

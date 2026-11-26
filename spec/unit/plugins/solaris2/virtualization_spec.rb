@@ -34,6 +34,7 @@ describe Ohai::System, "Solaris virtualization platform" do
     allow(plugin).to receive(:file_exist?).with("/usr/sbin/psrinfo").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/usr/sbin/smbios").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/usr/sbin/zoneadm").and_return(false)
+    allow(plugin).to receive(:file_exist?).with("/usr/sbin/virtinfo").and_return(false)
     allow(plugin).to receive(:shell_out).with("/usr/sbin/smbios").and_return(mock_shell_out(0, "", ""))
     allow(plugin).to receive(:shell_out).with("#{Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, "", ""))
   end
@@ -123,6 +124,100 @@ describe Ohai::System, "Solaris virtualization platform" do
     it "reports the global zone as a zone host" do
       expect(plugin[:virtualization][:systems][:zone]).to eq("host")
       expect(plugin[:virtualization]).not_to have_key(:guests)
+    end
+  end
+
+  describe "with virtinfo" do
+    let(:virtinfo) { Ohai.abs_path("/usr/sbin/virtinfo") }
+
+    # zoneadm list -cp from "How to Obtain the UUID of an Installed Non-Global
+    # Zone", Creating and Using Oracle Solaris Zones (Solaris 11.2)
+    let(:global_zone) { "0:global:running:/::solaris:shared:-:none:\n" }
+    let(:zones_with_kernel_zone) do
+      global_zone +
+        "3:test_zone:running:/system/volatile/zones/test_zone/zonepath:95180a6d-fab2-4363-ee33-81ba6e84a84f:solaris-kz:excl:R:solaris-kz:\n" \
+        "-:zone123:installed:/system/zones/zone123:96972ce7-d41d-4fec-ff4b-8f14123e0974:solaris:excl:-::\n"
+    end
+
+    # virtinfo -ap in a control domain, virtinfo(1M) Example 3 (Solaris 11.1)
+    let(:control_domain) do
+      <<~VIRTINFO
+        VERSION 1.0
+        DOMAINROLE|impl=LDoms|control=true|io=true|service=true|root=true
+        DOMAINNAME|name=primary
+        DOMAINUUID|uuid=8e0d6ec5-cd55-e57f-ae9f-b4cc050999a4
+        DOMAINCONTROL|name=san-t2k-6
+        DOMAINCHASSIS|serialno=0704RB0280
+      VIRTINFO
+    end
+
+    # virtinfo -a -p in a guest domain, facter's spec/fixtures/virtinfo
+    let(:guest_domain) do
+      <<~VIRTINFO
+        VERSION 1.0
+        DOMAINROLE|impl=LDoms|control=false|io=false|service=false|root=false
+        DOMAINNAME|name=sol11-11
+        DOMAINUUID|uuid=415dfab4-c373-4ac0-9414-8bf00801fb72
+        DOMAINCONTROL|name=opdx-a0-sun2
+        DOMAINCHASSIS|serialno=AK00358110
+      VIRTINFO
+    end
+
+    # virtinfo get all in a kernel zone, virtinfo(8) Example 2 (Solaris 11.4)
+    let(:kernel_zone) do
+      <<~VIRTINFO
+        NAME            CLASS       PROPERTY VALUE
+        kernel-zone     current     zonename bumblebee
+        non-global-zone supported   -        -
+        kernel-zone     unsupported status   not supported in kernel-zone
+      VIRTINFO
+    end
+
+    def stub_system(zoneadm:, ap: "", get_all: "")
+      allow(File).to receive(:executable?).and_call_original
+      allow(File).to receive(:executable?).with("/usr/sbin/zoneadm").and_return(true)
+      allow(plugin).to receive(:shell_out).with("zoneadm list -pc").and_return(mock_shell_out(0, zoneadm, ""))
+      allow(plugin).to receive(:file_exist?).with(virtinfo).and_return(true)
+      allow(plugin).to receive(:shell_out).with("#{virtinfo} -ap").and_return(mock_shell_out(0, ap, ""))
+      allow(plugin).to receive(:shell_out).with("#{virtinfo} get all").and_return(mock_shell_out(0, get_all, ""))
+      plugin.run
+    end
+
+    it "reports a guest domain as the primary system" do
+      stub_system(zoneadm: global_zone, ap: guest_domain)
+      expect(plugin[:virtualization]).to include(system: "ldom", role: "guest")
+      expect(plugin[:virtualization][:systems]).to eq("zone" => "host", "ldom" => "guest")
+    end
+
+    it "reports a control domain without other zones as the primary system" do
+      stub_system(zoneadm: global_zone, ap: control_domain)
+      expect(plugin[:virtualization]).to include(system: "ldom", role: "host")
+      expect(plugin[:virtualization][:systems]).to eq("zone" => "host", "ldom" => "host")
+    end
+
+    it "keeps the zone host primary on a control domain that hosts zones" do
+      stub_system(zoneadm: zones_with_kernel_zone, ap: control_domain)
+      expect(plugin[:virtualization]).to include(system: "zone", role: "host")
+      expect(plugin[:virtualization][:systems]).to eq("zone" => "host", "kernel-zone" => "host", "ldom" => "host")
+      expect(plugin[:virtualization][:guests].keys).to eq(%w{global test_zone zone123})
+    end
+
+    it "reports a kernel zone guest as the primary system" do
+      stub_system(zoneadm: global_zone, get_all: kernel_zone)
+      expect(plugin[:virtualization]).to include(system: "kernel-zone", role: "guest")
+      expect(plugin[:virtualization][:systems]).to eq("zone" => "host", "kernel-zone" => "guest")
+    end
+
+    it "reports a kernel zone host from the zone brand" do
+      stub_system(zoneadm: zones_with_kernel_zone)
+      expect(plugin[:virtualization]).to include(system: "zone", role: "host")
+      expect(plugin[:virtualization][:systems]).to eq("zone" => "host", "kernel-zone" => "host")
+    end
+
+    it "sets nothing from virtinfo on hardware without logical domains or kernel zones" do
+      stub_system(zoneadm: global_zone)
+      expect(plugin[:virtualization]).to include(system: "zone", role: "host")
+      expect(plugin[:virtualization][:systems]).to eq("zone" => "host")
     end
   end
 end

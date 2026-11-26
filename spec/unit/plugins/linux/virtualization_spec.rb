@@ -221,6 +221,127 @@ describe Ohai::System, "Linux virtualization platform" do
     end
   end
 
+  # every example runs the generic fallbacks, so default them to a host
+  # without the SMBIOS raw entry, in the initial PID namespace
+  before do
+    allow(plugin).to receive(:file_exist?).with("/sys/firmware/dmi/entries/0-0/raw").and_return(false)
+    allow(File).to receive(:readlink).and_call_original
+    allow(File).to receive(:readlink).with("/proc/self/ns/pid").and_return("pid:[4026531836]")
+  end
+
+  describe "when nothing names the hypervisor or container manager" do
+    # dmidecode's BIOS characteristics from an Ubuntu 24.04 guest on Apple's
+    # Virtualization.framework; only the BIOS record is used so the system
+    # strings can't identify it
+    let(:vm_bios) do
+      { bios: { all_records: [{ "Vendor" => "Apple Inc.",
+                                "Version" => "2167.0.0.0.0",
+                                "Characteristics" => {
+                                  "PCI is supported" => nil,
+                                  "BIOS is upgradeable" => nil,
+                                  "BIOS shadowing is allowed" => nil,
+                                  "Boot from CD is supported" => nil,
+                                  "Selectable boot is supported" => nil,
+                                  "Targeted content distribution is supported" => nil,
+                                  "UEFI is supported" => nil,
+                                  "System is a virtual machine" => nil,
+                                } }] } }
+    end
+
+    # /sys/firmware/dmi/entries/0-0/raw from the same guest: byte 1 is the
+    # length (0x1a) and byte 0x13 is 0x1c, with the virtual machine bit 0x10 set
+    let(:vm_raw) do
+      %w{00 1a 05 00 01 02 00 00 03 0f 80 98 01 00 00 00 00 00 00 1c ff ff ff ff 01 00 41 70 70 6c 65 20
+         49 6e 63 2e 00 32 31 36 37 2e 30 2e 30 2e 30 2e 30 00 31 30 2f 30 33 2f 32 30 32 36 00 00}.map(&:hex).pack("C*")
+    end
+
+    it "sets vm-other guest from dmidecode's System is a virtual machine" do
+      plugin[:dmi] = vm_bios
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("vm-other")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems]["vm-other"]).to eq("guest")
+    end
+
+    it "sets vm-other guest from the SMBIOS raw entry without dmidecode" do
+      allow(plugin).to receive(:file_exist?).with("/sys/firmware/dmi/entries/0-0/raw").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/firmware/dmi/entries/0-0/raw").and_return(vm_raw)
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("vm-other")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems]["vm-other"]).to eq("guest")
+    end
+
+    it "does not set virtualization when the SMBIOS raw entry needs root" do
+      allow(plugin).to receive(:file_exist?).with("/sys/firmware/dmi/entries/0-0/raw").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/firmware/dmi/entries/0-0/raw").and_raise(Errno::EACCES)
+      plugin.run
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
+    end
+
+    it "does not set virtualization for physical hardware's BIOS characteristics" do
+      # dmidecode BIOS Information from virt-what 1.27's tests/baremetal (a ThinkPad T510)
+      plugin[:dmi] = { bios: { all_records: [{ "Vendor" => "LENOVO",
+                                               "Characteristics" => {
+                                                 "PCI is supported" => nil,
+                                                 "PC Card (PCMCIA) is supported" => nil,
+                                                 "PNP is supported" => nil,
+                                                 "BIOS is upgradeable" => nil,
+                                                 "BIOS shadowing is allowed" => nil,
+                                                 "ESCD support is available" => nil,
+                                                 "Boot from CD is supported" => nil,
+                                                 "Selectable boot is supported" => nil,
+                                                 "EDD is supported" => nil,
+                                                 "ACPI is supported" => nil,
+                                                 "USB legacy is supported" => nil,
+                                                 "BIOS boot specification is supported" => nil,
+                                                 "Targeted content distribution is supported" => nil,
+                                               } }] } }
+      plugin.run
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
+    end
+
+    it "leaves a hypervisor found in DMI alone" do
+      # dmidecode System Information from virt-what 1.27's tests/qemu-smbios-kvm
+      plugin[:dmi] = vm_bios.merge(system: { manufacturer: "QEMU", product_name: "KVM Virtual Machine", version: "1.0" })
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("kvm")
+      expect(plugin[:virtualization][:systems]).not_to have_key("vm-other")
+    end
+
+    # readlink /proc/self/ns/pid in the same guest, under `unshare -fp --mount-proc`
+    it "sets container-other guest outside the initial PID namespace" do
+      allow(File).to receive(:readlink).with("/proc/self/ns/pid").and_return("pid:[4026532426]")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("container-other")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems]["container-other"]).to eq("guest")
+    end
+
+    it "sets container-other over vm-other when both apply" do
+      plugin[:dmi] = vm_bios
+      allow(File).to receive(:readlink).with("/proc/self/ns/pid").and_return("pid:[4026532426]")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("container-other")
+      expect(plugin[:virtualization][:systems]["vm-other"]).to eq("guest")
+      expect(plugin[:virtualization][:systems]["container-other"]).to eq("guest")
+    end
+
+    it "leaves a container found by name alone" do
+      allow(File).to receive(:readlink).with("/proc/self/ns/pid").and_return("pid:[4026532426]")
+      allow(plugin).to receive(:file_exist?).with("/.dockerenv").and_return(true)
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("docker")
+      expect(plugin[:virtualization][:systems]).not_to have_key("container-other")
+    end
+
+    it "does not set virtualization when /proc/self/ns/pid can't be read" do
+      allow(File).to receive(:readlink).with("/proc/self/ns/pid").and_raise(Errno::ENOENT)
+      plugin.run
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
+    end
+  end
+
   describe "when we are parsing DMI data" do
 
     it "sets virtualization attributes if the appropriate DMI data is present" do

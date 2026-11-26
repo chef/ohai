@@ -846,4 +846,44 @@ describe Ohai::System, "Darwin Network Plugin" do
       expect(@plugin["network"]["settings"]["net.smb.fs.tcprcvbuf"]).to eq("261120")
     end
   end
+
+  # macOS 11 and later print a Drop column on every row, so the <Link#>
+  # row of an interface without a link-layer address has eight numbers
+  describe "counters with a Drop column" do
+    before do
+      netstat = <<~NETSTAT
+        Name           Mtu   Network                                 Address                                    Ipkts Ierrs     Ibytes    Opkts Oerrs     Obytes  Coll Drop
+        lo0            16384 <Link#1>                                                                             281     0      55784      281     0      55784     0   0
+        lo0            16384 127                                     127.0.0.1                                    281     -      55784      281     -      55784     -   -
+        gif0*          1280  <Link#2>                                                                               0     0          0        0     0          0     0   0
+        en0            1500  <Link#6>                                72:76:f4:5e:d8:14                          83713     0  109240921    15395     0    2290048     0   0
+        en0            1500  192.168.64                              192.168.64.6                               83713     -  109240921    15395     -    2290048     -   -
+        fw0*           4078  <Link#7>                                a4:b1:97:ff:fe:b9:3a:d4                        0     0          0        0     0       1038     0   0
+        utun0          1500  <Link#8>                                                                               0     0          0        1     0         80     0   0
+      NETSTAT
+      allow(@plugin).to receive(:shell_out).with("arp -an").and_return(mock_shell_out(0, @darwin_arp, ""))
+      allow(@plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @darwin_ifconfig, ""))
+      allow(@plugin).to receive(:shell_out).with("netstat -i -d -l -b -n").and_return(mock_shell_out(0, netstat, ""))
+      allow(@plugin).to receive(:shell_out).with("sysctl net").and_return(mock_shell_out(0, @darwin_sysctl, ""))
+      @plugin.run
+    end
+
+    let(:counters) { @plugin["counters"]["network"]["interfaces"] }
+
+    it "reads the loopback counters from their own columns" do
+      expect(counters["lo0"]["rx"]).to include("packets" => "281", "errors" => "0", "bytes" => "55784")
+      expect(counters["lo0"]["tx"]).to include("packets" => "281", "errors" => "0", "bytes" => "55784", "collisions" => "0")
+    end
+
+    it "reads the counters of a tunnel without a link-layer address" do
+      expect(counters["utun0"]["rx"]).to include("packets" => "0", "errors" => "0", "bytes" => "0")
+      expect(counters["utun0"]["tx"]).to include("packets" => "1", "errors" => "0", "bytes" => "80", "collisions" => "0")
+    end
+
+    it "still reads the counters of interfaces with a MAC address" do
+      expect(counters["en0"]["rx"]).to include("packets" => "83713", "bytes" => "109240921")
+      expect(counters["en0"]["tx"]).to include("packets" => "15395", "bytes" => "2290048")
+      expect(counters["fw0"]["tx"]).to include("packets" => "0", "bytes" => "1038")
+    end
+  end
 end

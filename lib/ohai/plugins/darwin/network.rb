@@ -190,7 +190,10 @@ Ohai.plugin(:Network) do
     net_counters = Mash.new
     so = shell_out("netstat -i -d -l -b -n")
     so.stdout.lines do |line|
-      if line =~ /^([a-zA-Z0-9\.\:\-\*]+)\s+\d+\s+\<[a-zA-Z0-9\#]+\>\s+([a-f0-9\:]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/ ||
+      # the Address column is empty for interfaces without a link-layer
+      # address (lo0, utun*), so only take a colon-separated MAC (6 octets,
+      # or 8 for FireWire): a bare number there is already the Ipkts column
+      if line =~ /^([a-zA-Z0-9\.\:\-\*]+)\s+\d+\s+\<[a-zA-Z0-9\#]+\>\s+((?:[a-f0-9]{1,2}:){5,7}[a-f0-9]{1,2})\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/ ||
           line =~ /^([a-zA-Z0-9\.\:\-\*]+)\s+\d+\s+\<[a-zA-Z0-9\#]+\>(\s+)(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
         ifname = locate_interface(iface, $1, $2)
         next if iface[ifname].nil? # this shouldn't happen, but just in case

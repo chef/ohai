@@ -24,7 +24,7 @@ describe Ohai::System, "darwin filesystem plugin" do
   before do
     allow(plugin).to receive(:collect_os).and_return(:darwin)
 
-    allow(plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, "", ""))
+    allow(plugin).to receive(:shell_out).with("df -k -i").and_return(mock_shell_out(0, "", ""))
     allow(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, "", ""))
   end
 
@@ -39,11 +39,11 @@ describe Ohai::System, "darwin filesystem plugin" do
         map -static                   0         0         0   100%        0        0  100%   /mobile_symbol
         deweyfs@osxfuse0              0         0         0   100%        0        0  100%   /mnt/dewey
       DF
-      allow(plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @stdout, ""))
+      allow(plugin).to receive(:shell_out).with("df -k -i").and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "runs df -i" do
-      expect(plugin).to receive(:shell_out).ordered.with("df -i").and_return(mock_shell_out(0, @stdout, ""))
+      expect(plugin).to receive(:shell_out).ordered.with("df -k -i").and_return(mock_shell_out(0, @stdout, ""))
       plugin.run
     end
 
@@ -107,7 +107,7 @@ describe Ohai::System, "darwin filesystem plugin" do
         deweyfs@osxfuse0              0         0         0   100%        0        0  100%   /mnt/dewey
         /dev/disk0s2          488555536 313696448 174347088    65% 39276054 21793386 64%   /another/mountpoint
       DF
-      allow(plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @dfstdout, ""))
+      allow(plugin).to receive(:shell_out).with("df -k -i").and_return(mock_shell_out(0, @dfstdout, ""))
     end
 
     it "provides a devices view with all mountpoints" do
@@ -129,12 +129,43 @@ describe Ohai::System, "darwin filesystem plugin" do
         /dev/disk0s3          488555536 313696448 174347088    65% 39276054 21793386 64% /mnt
         /dev/disk0s4          488555536 313696448 174347088    65% 39276054 21793386 64% /mnt
       DF
-      allow(plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @dfstdout, ""))
+      allow(plugin).to receive(:shell_out).with("df -k -i").and_return(mock_shell_out(0, @dfstdout, ""))
     end
 
     it "provides a mounts view with all devices" do
       plugin.run
       expect(plugin[:filesystem]["by_mountpoint"]["/mnt"][:devices]).to eq(["/dev/disk0s3", "/dev/disk0s4"])
+    end
+  end
+
+  describe "when df reports 1024-byte blocks" do
+    before do
+      # df -k -i on macOS 27.2 (Apple Silicon)
+      @dfstdout = <<~DF
+        Filesystem     1024-blocks      Used Available Capacity  iused      ifree %iused  Mounted on
+        /dev/disk3s1s1   971350180  13439424  90700012    13%   486811  907000120    0%   /
+        devfs                  202       202         0   100%      700          0  100%   /dev
+        /dev/disk3s5     971350180 853885644  90700012    91% 11291864  907000120    1%   /System/Volumes/Data
+        map auto_home            0         0         0   100%        0          0     -   /System/Volumes/Data/home
+      DF
+      allow(plugin).to receive(:shell_out).with("df -k -i").and_return(mock_shell_out(0, @dfstdout, ""))
+    end
+
+    it "reports sizes in kilobytes" do
+      plugin.run
+      root = plugin[:filesystem]["by_pair"]["/dev/disk3s1s1,/"]
+      expect(root[:block_size]).to eq(1024)
+      expect(root[:kb_size]).to eq("971350180")
+      expect(root[:kb_used]).to eq("13439424")
+      expect(root[:kb_available]).to eq("90700012")
+    end
+
+    it "parses autofs maps that print - for %iused" do
+      plugin.run
+      home = plugin[:filesystem]["by_pair"]["map auto_home,/System/Volumes/Data/home"]
+      expect(home[:kb_size]).to eq("0")
+      expect(home[:percent_used]).to eq("100%")
+      expect(home[:inodes_percent_used]).to be_nil
     end
   end
 end

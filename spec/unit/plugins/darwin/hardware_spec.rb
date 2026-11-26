@@ -100,4 +100,52 @@ describe Ohai::System, "Darwin hardware plugin", :unix_only do
     expect(plugin["hardware"]["battery"]["serial"]).to eq("D123456789ABCDEFG")
     expect(plugin["hardware"]["battery"]["remaining"]).to eq(100)
   end
+
+  context "on an Apple Silicon laptop" do
+    # SPPowerDataType battery entry recorded on an M4 Pro MacBook Pro running
+    # macOS 27.2 (serial number replaced)
+    let(:power) do
+      [{ "_dataType" => "SPPowerDataType", "_items" => [{
+        "_name" => "spbattery_information",
+        "sppower_battery_charge_info" => {
+          "sppower_battery_at_warn_level" => "FALSE",
+          "sppower_battery_fully_charged" => "TRUE",
+          "sppower_battery_is_charging" => "FALSE",
+          "sppower_battery_state_of_charge" => 100,
+        },
+        "sppower_battery_health_info" => {
+          "sppower_battery_cycle_count" => 351,
+          "sppower_battery_health" => "Good",
+          "sppower_battery_health_maximum_capacity" => "90%",
+        },
+        "sppower_battery_model_info" => {
+          "sppower_battery_device_name" => "bq40z651",
+          "sppower_battery_serial_number" => "D123456789ABCDEFG",
+        },
+      }] }]
+    end
+
+    before do
+      combined = %w{HARDWARE STORAGE}.flat_map do |name|
+        Plist.parse_xml(HardwareSystemProfilerOutput.const_get(name))
+      end + power
+      allow(plugin).to receive(:shell_out).with(
+        "system_profiler SPHardwareDataType SPStorageDataType SPPowerDataType -xml"
+      ).and_return(mock_shell_out(0, combined.to_plist, ""))
+    end
+
+    it "reports the battery from its state of charge" do
+      plugin.run
+      battery = plugin["hardware"]["battery"]
+      expect(battery["remaining"]).to eq(100)
+      expect(battery["current_capacity"]).to be_nil
+      expect(battery["max_capacity"]).to be_nil
+      expect(battery["health_maximum_capacity"]).to eq("90%")
+      expect(battery["charge_cycle_count"]).to eq(351)
+      expect(battery["health"]).to eq("Good")
+      expect(battery["fully_charged"]).to eq(true)
+      expect(battery["is_charging"]).to eq(false)
+      expect(battery["serial"]).to eq("D123456789ABCDEFG")
+    end
+  end
 end

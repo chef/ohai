@@ -94,7 +94,13 @@ Ohai.plugin(:Hardware) do
         battery[:charge_cycle_count] = health["sppower_battery_cycle_count"]
         battery[:health] = health["sppower_battery_health"]
         battery[:serial] = entry["sppower_battery_model_info"]["sppower_battery_serial_number"]
-        battery[:remaining] = (battery["current_capacity"].to_f / battery["max_capacity"].to_f * 100).to_i
+        battery[:health_maximum_capacity] = health["sppower_battery_health_maximum_capacity"] if health.key?("sppower_battery_health_maximum_capacity")
+        # Apple Silicon reports the charge as a percentage and no capacities
+        if charge.key?("sppower_battery_state_of_charge")
+          battery[:remaining] = charge["sppower_battery_state_of_charge"].to_i
+        elsif battery[:max_capacity].to_f > 0
+          battery[:remaining] = (battery[:current_capacity].to_f / battery[:max_capacity].to_f * 100).to_i
+        end
       end
     end
     hardware[:battery] = battery

@@ -504,8 +504,9 @@ Ohai.plugin(:CPU) do
         cpu[:family] = Regexp.last_match[1].to_i
       when /^machdep.cpu.stepping: (.*)$/
         cpu[:stepping] = Regexp.last_match[1].to_i
-      when /^machdep.cpu.features: (.*)$/
-        cpu[:flags] = Regexp.last_match[1].downcase.split
+      when /^machdep.cpu.(?:features|extfeatures|leaf7_features): (.*)$/
+        # sysctl splits the flags over these three keys
+        cpu[:flags] = (cpu[:flags] || []) | Regexp.last_match[1].downcase.split
       end
     end
   end

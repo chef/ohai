@@ -51,6 +51,7 @@ describe Ohai::System, "Darwin Network Plugin" do
               media: autoselect <full-duplex>
               status: inactive
       utun0: flags=8051<UP,POINTOPOINT,RUNNING,MULTICAST> mtu 1380
+              inet 100.64.0.2 --> 100.64.0.1 netmask 0xffffffff
               inet6 fe80::ba8d:12ff:fe3a:32de%utun0 prefixlen 64 scopeid 0x8
               inet6 fd00:6587:52d7:c87:ba8d:12ff:fe3a:32de prefixlen 64
     DARWIN_IFCONFIG
@@ -451,6 +452,12 @@ describe Ohai::System, "Darwin Network Plugin" do
       expect(@plugin["network"]["interfaces"]["en1"]["addresses"]["10.20.10.144"]["netmask"]).to eq("255.255.255.0")
       expect(@plugin["network"]["interfaces"]["en1"]["addresses"]["10.20.10.144"]["broadcast"]).to eq("10.20.10.255")
       expect(@plugin["network"]["interfaces"]["en1"]["addresses"]["10.20.10.144"]["family"]).to eq("inet")
+    end
+
+    it "detects the ipv4 address and peer of a point-to-point interface" do
+      expect(@plugin["network"]["interfaces"]["utun0"]["addresses"]["100.64.0.2"]).to eq(
+        "family" => "inet", "netmask" => "255.255.255.255", "peer" => "100.64.0.1"
+      )
     end
 
     it "detects the ipv6 addresses of the ethernet interface" do

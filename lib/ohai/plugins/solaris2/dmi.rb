@@ -94,7 +94,7 @@ Ohai.plugin(:DMI) do
     header_information_line = /^(\d+)\s+(\d+)\s+(\S+)\s+\(([^\)]+)\)/
     blank_line = /^\s*$/
     data_key_value_line = /^  ([^:]+): (.*)/
-    data_key_only_line = /^  (\S.*)(:\s*)?$/
+    data_key_only_line = /^  (\S.*?)(:\s*)?$/
     extended_data_line = /^\t(\S+) \((.+)\)/
 
     dmi_record = nil

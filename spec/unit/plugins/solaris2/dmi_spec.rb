@@ -150,4 +150,165 @@ describe Ohai::System, "Solaris2.X DMI plugin" do
     @plugin.run
     expect(@plugin[:dmi]).not_to have_key(:on_board_devices)
   end
+
+  # Oracle Solaris 11.4 on an OCI VM.Standard.E5.Flex, UUID replaced
+  describe "with smbios output from Oracle Solaris 11.4 under KVM" do
+    let(:smbios) do
+      [
+        "ID    SIZE TYPE",
+        "256   73   SMB_TYPE_SYSTEM (system information)",
+        "",
+        "  Manufacturer: QEMU",
+        "  Product: Standard PC (Q35 + ICH9, 2009)",
+        "  Version: pc-q35-7.2",
+        "",
+        "  UUID: 0eaf0001-0000-4000-8000-0000feed0001",
+        "  Wake-Up Event: 0x6 (power switch)",
+        "  SKU Number: ",
+        "  Family: ",
+        "",
+        "ID    SIZE TYPE",
+        "768   53   SMB_TYPE_CHASSIS (system enclosure or chassis)",
+        "",
+        "  Manufacturer: QEMU",
+        "  Version: pc-q35-7.2",
+        "  Asset Tag: OracleCloud.com",
+        "",
+        "  SKU Number: ",
+        "  OEM Data: 0x0",
+        "  Lock Present: N",
+        "  Chassis Type: 0x1 (other)",
+        "  Boot-Up State: 0x3 (safe)",
+        "  Power Supply State: 0x3 (safe)",
+        "  Thermal State: 0x3 (safe)",
+        "  Chassis Height: 0u",
+        "  Power Cords: 0",
+        "  Element Records: 0",
+        "",
+        "ID    SIZE TYPE",
+        "1024  63   SMB_TYPE_PROCESSOR (processor)",
+        "",
+        "  Manufacturer: QEMU",
+        "  Version: pc-q35-7.2",
+        "  Location Tag: CPU 0",
+        "",
+        "  Family: 1 (other)",
+        "  CPUID: 0x78bfbff00a10f11",
+        "  Type: 3 (central processor)",
+        "  Socket Upgrade: 1 (other)",
+        "  Socket Status: Populated",
+        "  Processor Status: 1 (enabled)",
+        "  Supported Voltages:",
+        "  External Clock Speed: Unknown",
+        "  Maximum Speed: 2000MHz",
+        "  Current Speed: 2000MHz",
+        "  L1 Cache: None",
+        "  L2 Cache: None",
+        "  L3 Cache: None",
+        "  Cores: 1",
+        "  Cores Enabled: 1",
+        "  Threads: 2",
+        "  Characteristics: 0x2",
+        "\tSMB_PRC_UNKNOWN (Unknown)",
+        "",
+        "ID    SIZE TYPE",
+        "4096  23   SMB_TYPE_MEMARRAY (physical memory array)",
+        "",
+        "  Location: 1 (other)",
+        "  Use: 3 (system memory)",
+        "  ECC: 6 (multi-bit ECC)",
+        "  Number of Slots/Sockets: 1",
+        "  Memory Error Data: Not Supported",
+        "  Max Capacity: 8589934592 bytes",
+        "",
+        "ID    SIZE TYPE",
+        "4352  51   SMB_TYPE_MEMDEVICE (memory device)",
+        "",
+        "  Manufacturer: QEMU",
+        "  Location Tag: DIMM 0",
+        "",
+        "  Physical Memory Array: 4096",
+        "  Memory Error Data: Not Supported",
+        "  Total Width: Unknown",
+        "  Data Width: Unknown",
+        "  Size: 8589934592 bytes",
+        "  Form Factor: 9 (DIMM)",
+        "  Set: None",
+        "  Memory Type: 7 (RAM)",
+        "  Flags: 0x2",
+        "\tSMB_MDF_OTHER (other)",
+        "  Speed: Unknown",
+        "  Minimum voltage: Unknown",
+        "  Maximum voltage: Unknown",
+        "  Configured voltage: Unknown",
+        "  Device Locator: DIMM 0",
+        "  Bank Locator: ",
+        "",
+        "ID    SIZE TYPE",
+        "4864  31   SMB_TYPE_MEMARRAYMAP (memory array mapped address)",
+        "",
+        "  Physical Memory Array: 4096",
+        "  Devices per Row: 1",
+        "  Physical Address: 0x0",
+        "  Size: 2147483648 bytes",
+        "",
+        "ID    SIZE TYPE",
+        "4865  31   SMB_TYPE_MEMARRAYMAP (memory array mapped address)",
+        "",
+        "  Physical Memory Array: 4096",
+        "  Devices per Row: 1",
+        "  Physical Address: 0x100000000",
+        "  Size: 6442450944 bytes",
+        "",
+        "ID    SIZE TYPE",
+        "8192  11   SMB_TYPE_BOOT (system boot status)",
+        "",
+        "  Boot Status Code: 0x0 (no errors detected)",
+        "",
+        "ID    SIZE TYPE",
+        "0     53   SMB_TYPE_BIOS (BIOS information)",
+        "",
+        "  Vendor: Oracle",
+        "  Version String: 20260902",
+        "  Release Date: Sep-02-2026",
+        "  Address Segment: 0xe800",
+        "  ROM Size: 65536 bytes",
+        "  Image Size: 98304 bytes",
+        "  Characteristics: 0x8",
+        "\tSMB_BIOSFL_BCNOTSUP (BIOS chars not supported)",
+        "  Characteristics Extension Byte 1: 0x0",
+        "  Characteristics Extension Byte 2: 0x1c",
+        "\tSMB_BIOSXB2_ETCDIST (Enable Targeted Content Distrib.)",
+        "\tSMB_BIOSXB2_UEFI (UEFI Specification supported)",
+        "\tSMB_BIOSXB2_VIRT (SMBIOS describes a virtual machine)",
+        "  Version Number: 0.0",
+      ].join("\n") + "\n"
+    end
+
+    before do
+      allow(@plugin).to receive(:shell_out).with("smbios").and_return(mock_shell_out(0, smbios, ""))
+      @plugin.run
+    end
+
+    it "reads the system, chassis and BIOS strings" do
+      expect(@plugin[:dmi][:system]).to include(manufacturer: "QEMU", product: "Standard PC (Q35 + ICH9, 2009)",
+        uuid: "0eaf0001-0000-4000-8000-0000feed0001")
+      expect(@plugin[:dmi][:chassis][:asset_tag]).to eq("OracleCloud.com")
+      expect(@plugin[:dmi][:bios]).to include(vendor: "Oracle", version_string: "20260902", release_date: "Sep-02-2026")
+    end
+
+    it "reads the processor's cores and threads" do
+      expect(@plugin[:dmi][:processor]).to include(cores: "1", cores_enabled: "1", threads: "2")
+    end
+
+    it "names a field that has no value without its colon" do
+      expect(@plugin[:dmi][:processor]).to include(supported_voltages: "")
+      expect(@plugin[:dmi][:processor]).not_to have_key(:supported_voltages_)
+      expect(@plugin[:dmi][:processor][:all_records].first).to include("Supported Voltages" => "")
+    end
+
+    it "keeps a field that has an empty value after its colon" do
+      expect(@plugin[:dmi][:system]).to include(sku_number: "", family: "")
+    end
+  end
 end

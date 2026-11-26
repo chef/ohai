@@ -27,6 +27,7 @@ describe Ohai::System, "Linux virtualization platform" do
     # default to all requested plugins not existing
     allow(plugin).to receive(:file_exist?).with("/proc/xen").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/proc/xen/capabilities").and_return(false)
+    allow(plugin).to receive(:file_exist?).with("/sys/hypervisor/type").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/proc/modules").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/proc/cpuinfo").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/var/lib/hyperv/.kvp_pool_3").and_return(false)
@@ -114,6 +115,32 @@ describe Ohai::System, "Linux virtualization platform" do
       expect(plugin[:virtualization][:system]).to eq("openstack")
       expect(plugin[:virtualization][:role]).to eq("host")
       expect(plugin[:virtualization][:systems][:openstack]).to eq("host")
+    end
+  end
+
+  describe "when /sys/hypervisor/type is xen" do
+    # feature words are built from XENFEAT bit numbers
+    # (xen/include/public/features.h: XENFEAT_dom0 is 11), not recorded
+    before do
+      allow(plugin).to receive(:file_exist?).with("/sys/hypervisor/type").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/hypervisor/type").and_return("xen\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/hypervisor/properties/features").and_return(true)
+    end
+
+    it "sets xen guest when XENFEAT_dom0 is not set" do
+      allow(plugin).to receive(:file_read).with("/sys/hypervisor/properties/features").and_return(format("%08x\n", 1 << 0))
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("xen")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:xen]).to eq("guest")
+    end
+
+    it "sets xen host when XENFEAT_dom0 is set" do
+      allow(plugin).to receive(:file_read).with("/sys/hypervisor/properties/features").and_return(format("%08x\n", (1 << 11) | (1 << 0)))
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("xen")
+      expect(plugin[:virtualization][:role]).to eq("host")
+      expect(plugin[:virtualization][:systems][:xen]).to eq("host")
     end
   end
 

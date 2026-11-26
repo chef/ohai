@@ -54,6 +54,13 @@ describe Ohai::System, "plugin etc" do
       expect(plugin[:etc][:group]["www"]).to eq(Mash.new(gid: 800, members: %w{www deploy}))
     end
 
+    it "keeps the first entry of a group listed twice" do
+      expect(Etc).to receive(:group).and_yield(GroupEntry.new("admin", 80, %w{root _mbsetupuser admin}))
+        .and_yield(GroupEntry.new("admin", 80, %w{root}))
+      plugin.run
+      expect(plugin[:etc][:group]["admin"]).to eq(Mash.new(gid: 80, members: %w{root _mbsetupuser admin}))
+    end
+
     if "".respond_to?(:force_encoding)
       it "sets the encoding of strings to the default external encoding" do
         fields = ["root", 1, 1, "/root", "/bin/zsh", "BOFH"]

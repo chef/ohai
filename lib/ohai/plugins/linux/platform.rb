@@ -301,7 +301,8 @@ Ohai.plugin(:Platform) do
       logger.trace("Plugin platform: Using /etc/os-release for platform detection")
 
       # fixup os-release names to ohai platform names
-      platform platform_id_remap(os_release_info["ID"])
+      # os-release has no ID (os-release(5) would default it to "linux")
+      platform platform_id_remap(os_release_info["ID"] || "generic-linux")
 
       platform_version determine_os_version
     else # we're on an old Linux distro

@@ -342,6 +342,26 @@ describe Ohai::System, "Linux plugin platform" do
         expect(plugin[:platform_version]).to eq("bullseye/sid")
       end
     end
+
+    context "when os-release has no ID" do
+      let(:os_data) do
+        <<~OS_DATA
+          NAME="Linux"
+          VERSION_ID="1.0"
+        OS_DATA
+      end
+
+      before do
+        expect(plugin).to receive(:file_read).with("/etc/os-release").and_return(os_data)
+      end
+
+      it "defaults the platform to generic-linux" do
+        plugin.run
+        expect(plugin[:platform]).to eq("generic-linux")
+        expect(plugin[:platform_family]).to be_nil
+        expect(plugin[:platform_version]).to eq("1.0")
+      end
+    end
   end
 
   context "when on system without /etc/os-release (legacy)" do
